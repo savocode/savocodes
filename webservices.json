@@ -1,0 +1,403 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Blueprint of all the restfull web-services of LifeCare Application.",
+    "version": "1.1.5",
+    "title": "LifeCare Web Services",
+    "contact": {
+      "email": "ahsaan@lntechnologies.com"
+    },
+    "license": {
+      "name": "LNTechnologies"
+    }
+  },
+  "host": "192.168.168.114",
+  "basePath": "/lifecare/public/api/v1",
+  "tags": [
+    {
+      "name": "User",
+      "description": "User or Account Operations"
+    },
+    {
+      "name": "General",
+      "description": "Application core configs"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Register as user (normal|driver) in application.",
+        "description": "",
+        "operationId": "applyForRegistration",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "formData",
+            "description": "Email to register for.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "description": "Password which will be used for log-in.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "first_name",
+            "in": "formData",
+            "description": "First name for registration.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "last_name",
+            "in": "formData",
+            "description": "Last name for registration.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "profession_id",
+            "in": "formData",
+            "description": "Profession id for physician.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "hospital_id",
+            "in": "formData",
+            "description": "Hospital id for physician.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "phone",
+            "in": "formData",
+            "description": "Phone field for user.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "device_token",
+            "in": "formData",
+            "description": "Device token for push notification.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "device_type",
+            "in": "formData",
+            "description": "Device type for push notification.",
+            "required": false,
+            "type": "string",
+            "default": "",
+            "enum": [
+              "ios",
+              "android"
+            ]
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Login as user (normal|driver) in application.",
+        "description": "",
+        "operationId": "loginService",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "formData",
+            "description": "Login Email Address.",
+            "required": true,
+            "type": "string",
+            "default": "normal@appmaisters.com"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "description": "Password which will be used for log-in.",
+            "required": true,
+            "type": "string",
+            "default": "abc123"
+          },
+          {
+            "name": "device_token",
+            "in": "formData",
+            "description": "Device token for push notification.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "device_type",
+            "in": "formData",
+            "description": "Device type for push notification.",
+            "required": false,
+            "type": "string",
+            "default": "",
+            "enum": [
+              "ios",
+              "android"
+            ]
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Logout user.",
+        "description": "",
+        "operationId": "logoutService",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_token",
+            "in": "formData",
+            "description": "Authenticated JWT Token.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/reset-password": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Reset user password registered.",
+        "description": "",
+        "operationId": "resetPasswordService",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "formData",
+            "description": "Email you whish to reset password for.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/account/update": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Update profile.",
+        "description": "",
+        "operationId": "updateProfileService",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_token",
+            "in": "formData",
+            "description": "Authenticated JWT Token.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "old_pwd",
+            "in": "formData",
+            "description": "Parameter required if changing password.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "profile_picture",
+            "in": "formData",
+            "description": "",
+            "required": false,
+            "type": "file"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "description": "Parameter required if changing password.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "first_name",
+            "in": "formData",
+            "description": "",
+            "required": false,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "last_name",
+            "in": "formData",
+            "description": "",
+            "required": false,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "description": "",
+            "required": false,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "phone",
+            "in": "formData",
+            "description": "Phone field for user.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/account/me": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "View self user profile.",
+        "description": "",
+        "operationId": "viewSelfProfileService",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_token",
+            "in": "formData",
+            "description": "Authenticated JWT Token.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/account/view/{user_id}": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "View other user profile.",
+        "description": "",
+        "operationId": "viewSelfProfileService",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_token",
+            "in": "formData",
+            "description": "Authenticated JWT Token.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "User ID of user.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/boot-me-up": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "All application configurations goes here.",
+        "description": "",
+        "operationId": "initService",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {}
+      }
+    }
+  },
+  "securityDefinitions": {
+
+  },
+  "definitions": {
+
+  }
+}

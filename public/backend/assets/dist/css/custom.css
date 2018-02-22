@@ -1,0 +1,38 @@
+.w20p{width: 20% !important;}
+.sidebar-menu .treeview-menu>li{
+    margin-left: 20px;
+}
+form.form-inline{
+    display: inline-block;
+}
+.form-group .btn .caret {margin-left: 2px !important; margin-top: -3px;}
+.dl-horizontal.viewModule dt, .dl-horizontal.viewModule dd{
+    font-size: 16px;
+    line-height: 1.7;
+}
+.dynGroup .entry:not(:first-of-type) {
+    margin-top: 10px;
+}
+.chat .item>.oponent{
+    border: 2px solid #3c8dbc;
+}
+.chat.chatScroller{
+    max-height: 500px;
+    overflow-y: scroll;
+}
+
+td.details-control {
+    background: url('../img/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('../img/details_close.png') no-repeat center center;
+}
+
+.datepicker[readonly] {
+    background: white;
+}
+
+#filter-form .row {
+    margin-bottom: 10px;
+}
