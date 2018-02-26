@@ -16,7 +16,6 @@ class Kernel extends ConsoleKernel
         Generators\GenerateModels::class,
         Generators\GenerateException::class,
         Generators\GenerateTrait::class,
-        Commands\RemovePastPolygonPoints::class,
     ];
 
     /**

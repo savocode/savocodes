@@ -122,6 +122,15 @@ Route::prefix('backend')->namespace('Backend')->group(function () {
 
 Route::get('/test', function () {
 
+    $ref = new \App\Models\Referral([
+        'first_name' => 'test',
+    ]);
+
+    $user = User::find(5);
+    $ref->doctor()->associate($user); // by object
+    $ref->hospital()->associate(1); // by id
+    $ref->save();
+
     return 'w0w';
 
 });

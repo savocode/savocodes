@@ -14,6 +14,7 @@ use App\Http\Requests\Api\UserUpdateRequest;
 use App\Models\City;
 use App\Models\Hospital;
 use App\Models\Profession;
+use App\Models\Referral;
 use App\Models\Setting;
 use App\Models\User;
 use Auth;
@@ -40,6 +41,7 @@ class WebserviceController extends ApiBaseController {
         $allInOneConfigs = [];
         $allInOneConfigs['professions'] = Profession::active()->pluck('title', 'id');
         $allInOneConfigs['hospitals'] = Hospital::active()->pluck('title', 'id');
+        $allInOneConfigs['about_us'] = Setting::extract('cms.about_us', '');
 
         return RESTAPIHelper::response( $allInOneConfigs );
     }
@@ -303,6 +305,117 @@ class WebserviceController extends ApiBaseController {
         $payload = $this->generateUserProfileResponse( $user );
 
         return RESTAPIHelper::response( $payload );
+    }
+
+    public function searchHospitalsByZipCode(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'zipcode' => 'required|min:5|max:7',
+        ]);
+
+        if ($validator->fails()) {
+            return RESTAPIHelper::response(array_flatten($validator->messages()->toArray()), false, 'validation_error');
+        }
+
+        $zipCode = preg_replace('%[^a-zA-Z0-9]%', '', $request->get('zipcode')); // replace everything except alpha-numeric
+        $perPage = $request->get('limit', constants('api.config.defaultPaginationLimit'));
+
+        $hospitals = Hospital::active()->where('zip_code', '=', $zipCode)->paginate($perPage);
+
+        return RESTAPIHelper::response( $hospitals->pluckMultiple([
+            'id',
+            'title',
+            'address',
+            'location',
+            'zip_code',
+            'latitude',
+            'longitude',
+            'timing_open',
+            'timing_close',
+            'phone',
+            'is_24_7_phone',
+        ], [
+            'id' => 'hospital_id'
+        ]) );
+    }
+
+    public function getHospitalDetail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'hospital_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return RESTAPIHelper::response(array_flatten($validator->messages()->toArray()), false, 'validation_error');
+        }
+
+        $hospital = Hospital::active()->find($request->get('hospital_id'));
+
+        if (!$hospital) {
+            return RESTAPIHelper::response('Hospital does not exist.', false, 'validation_error');
+        }
+
+        return RESTAPIHelper::response( collect($hospital)->only([
+            'id',
+            'title',
+            'address',
+            'location',
+            'zip_code',
+            'latitude',
+            'longitude',
+            'timing_open',
+            'timing_close',
+            'phone',
+            'is_24_7_phone',
+        ]) );
+    }
+
+    public function submitReferral(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'first_name'  => 'required',
+            'last_name'   => 'required',
+            'age'         => 'required',
+            'phone'       => 'required',
+            'diagnosis'   => 'required',
+            'hospital_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return RESTAPIHelper::response(array_flatten($validator->messages()->toArray()), false, 'validation_error');
+        }
+
+        $hospital = Hospital::active()->find($request->get('hospital_id'));
+
+        if (!$hospital) {
+            return RESTAPIHelper::response('Hospital does not exist.', false, 'validation_error');
+        }
+
+        $me = $this->getUserInstance();
+
+        $referral = new Referral($request->all());
+
+        $referral->doctor()->associate($me);
+        $referral->hospital()->associate($hospital);
+        $referral->save();
+
+        return RESTAPIHelper::response([], true, 'You have successfully referral a patient.');
+    }
+
+    public function getReferrals(Request $request)
+    {
+        $perPage = $request->get('limit', constants('api.config.defaultPaginationLimit'));
+
+        return RESTAPIHelper::response( $this->getUserInstance()->referrals()->paginate($perPage)->pluckMultiple([
+            'first_name',
+            'last_name',
+            'age',
+            'phone',
+            'diagnosis',
+            'status',
+            'status_text',
+            'hospital_title',
+        ]) );
     }
 
 }

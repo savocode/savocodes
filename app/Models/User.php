@@ -629,6 +629,11 @@ class User extends Authenticatable
         return $this->belongsTo('App\Models\State', 'state', 'id');
     }
 
+    public function referrals()
+    {
+        return $this->hasMany(Referral::class, 'referred_by');
+    }
+
     public function notifications()
     {
         return $this->hasMany(Notification::class);

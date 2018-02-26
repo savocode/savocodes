@@ -118,7 +118,6 @@ class Notification extends Model
         $notification = $this->getOwner()->notifications()->create( $attributes );
 
         // Increase unread notifications
-        // MEDIUM | TODO: Create a callback for proxy notification, where firebase's notificaiton can be synced with database
         event(new NewNotificationAdded($notification, $this->getOwner()));
 
         $this->throwNotifications($notification);

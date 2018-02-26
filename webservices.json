@@ -21,6 +21,10 @@
     {
       "name": "General",
       "description": "Application core configs"
+    },
+    {
+      "name": "Hospital/Patient",
+      "description": "Related to hospitals or patients"
     }
   ],
   "schemes": [
@@ -382,6 +386,210 @@
           "application/json"
         ],
         "parameters": [],
+        "responses": {}
+      }
+    },
+    "/hospital/search": {
+      "post": {
+        "tags": [
+          "Hospital/Patient"
+        ],
+        "summary": "Search hospitals by zipcode.",
+        "description": "",
+        "operationId": "searchHospitalByCode",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_token",
+            "in": "formData",
+            "description": "Authenticated JWT Token.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "zipcode",
+            "in": "formData",
+            "description": "Enter Zip Code.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "limit",
+            "in": "formData",
+            "description": "Per page limit. Default: 20",
+            "required": false,
+            "type": "string",
+            "default": "20"
+          },
+          {
+            "name": "page",
+            "in": "formData",
+            "description": "Page number. Default: 1",
+            "required": false,
+            "type": "string",
+            "default": "1"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/hospital/detail": {
+      "post": {
+        "tags": [
+          "Hospital/Patient"
+        ],
+        "summary": "Get hospital detail by id.",
+        "description": "",
+        "operationId": "getHospitalById",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_token",
+            "in": "formData",
+            "description": "Authenticated JWT Token.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "hospital_id",
+            "in": "formData",
+            "description": "Enter hospital_id.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/referral/submit": {
+      "post": {
+        "tags": [
+          "Hospital/Patient"
+        ],
+        "summary": "Refer patient to hospital.",
+        "description": "",
+        "operationId": "referPatientToHospital",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_token",
+            "in": "formData",
+            "description": "Authenticated JWT Token.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "hospital_id",
+            "in": "formData",
+            "description": "Enter hospital_id.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "first_name",
+            "in": "formData",
+            "description": "Enter Patient First Name.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "last_name",
+            "in": "formData",
+            "description": "Enter Patient Last Name.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "age",
+            "in": "formData",
+            "description": "Enter Patient Age.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "phone",
+            "in": "formData",
+            "description": "Enter Patient Phone.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "diagnosis",
+            "in": "formData",
+            "description": "Enter Patient Diagnosis.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/referral/list": {
+      "post": {
+        "tags": [
+          "Hospital/Patient"
+        ],
+        "summary": "Fetch list of your referals.",
+        "description": "",
+        "operationId": "fetchReferalLists",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "_token",
+            "in": "formData",
+            "description": "Authenticated JWT Token.",
+            "required": true,
+            "type": "string",
+            "default": ""
+          },
+          {
+            "name": "limit",
+            "in": "formData",
+            "description": "Per page limit. Default: 20",
+            "required": false,
+            "type": "string",
+            "default": "20"
+          },
+          {
+            "name": "page",
+            "in": "formData",
+            "description": "Page number. Default: 1",
+            "required": false,
+            "type": "string",
+            "default": "1"
+          }
+        ],
         "responses": {}
       }
     }
