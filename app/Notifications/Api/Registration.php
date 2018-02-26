@@ -17,14 +17,17 @@ class Registration extends Notification
      */
     public $user;
 
+    public $password;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($user, $password)
     {
         $this->user = $user;
+        $this->password = $password;
     }
 
     /**
@@ -47,11 +50,13 @@ class Registration extends Notification
     public function toMail($notifiable)
     {
         $mailMessage = (new MailMessage)
-            ->subject( Email::makeSubject('Account Verification Process') )
+            ->subject( Email::makeSubject('Account Registered - Wait for Approval') )
             ->greeting($this->user->full_name);
 
         $mailMessage
-            ->line('We have received your registration details on ' . constants('global.site.name') . '. Please wait for the admin to approve your account. We will notify you upon activation.');
+            ->line('We have received your registration details on ' . constants('global.site.name') . '. Please find your login credentials below.')
+            ->line(sprintf('Email / Password: %s / %s', $this->user->email, $this->password))
+            ->line('Currently your account is in pending state and requires admin to approve first. We will notify you upon activation.');
 
         $mailMessage
             ->line('Thank you for using our application.');

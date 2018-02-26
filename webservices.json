@@ -51,14 +51,6 @@
             "default": ""
           },
           {
-            "name": "password",
-            "in": "formData",
-            "description": "Password which will be used for log-in.",
-            "required": true,
-            "type": "string",
-            "default": ""
-          },
-          {
             "name": "first_name",
             "in": "formData",
             "description": "First name for registration.",

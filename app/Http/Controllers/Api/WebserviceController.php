@@ -47,9 +47,7 @@ class WebserviceController extends ApiBaseController {
     public function register(UserRegisterRequest $request)
     {
         $input                       = $request->all();
-        $input['password']           = bcrypt($input['password']);
-        $input['active']             = 0;
-        $input['email_verification'] = 1;
+        $input['password']           = bcrypt($password = str_random(12));
         $input['role_id']            = User::ROLE_PHYSICIANS;
 
         if ( $request->has('phone') ) {
@@ -76,14 +74,18 @@ class WebserviceController extends ApiBaseController {
         $user = User::create($input);
         $user = User::find($user->id); // Just because we need complete model attributes for event based activities
 
+        // HIGH | TODO: Change is_active flag to `0` so that admin can approve this account.
         $user->email_verification = 1;
+        $user->is_active          = 1;
         $user->save();
 
         // Fire user registration event
-        event(new JWTUserRegistration($user));
+        event(new JWTUserRegistration($user, compact('password')));
 
         if ( $user->email_verification != 1 ) {
             return RESTAPIHelper::response([], true, 'Your account has been registered and email address requires verification. A verification code is sent to your email. Please also check Junk/Spam folder as well.');
+        } else if ( $user->is_active != 1 ) {
+            return RESTAPIHelper::response([], true, 'Your account has been registered and requires admin approval. We will notify you once admin approves your account.');
         } else {
             return $this->login($request);
         }

@@ -26,10 +26,11 @@ class SendVerificationEmail
      */
     public function handle(JWTUserRegistration $event)
     {
-        $user = $event->user;
+        $user       = $event->user;
+        $attributes = $event->attributes;
 
         try {
-            $user->notify( new Registration($user) );
+            $user->notify( new Registration($user, $attributes['password']) );
         } catch (\Exception $e) {}
     }
 }

@@ -37,7 +37,7 @@ class UserRegisterRequest extends Request {
     {
         $rules = [
             'email'         => 'required|email|unique:users,email',
-            'password'      => 'required|string',
+            // 'password'      => 'required|string',
             'first_name'    => 'required|string',
             'last_name'     => 'required|string',
             'profession_id' => 'required|min:1',
