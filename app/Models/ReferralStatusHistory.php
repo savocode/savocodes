@@ -17,4 +17,17 @@ class ReferralStatusHistory extends Model
     {
         return null;
     }
+
+    /*
+     * @Relationships
+     */
+    public function referral()
+    {
+        return $this->belongsTo(Referral::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

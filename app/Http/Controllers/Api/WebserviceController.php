@@ -38,10 +38,11 @@ class WebserviceController extends ApiBaseController {
 
     public function initializationConfigs(Request $request)
     {
-        $allInOneConfigs = [];
-        $allInOneConfigs['professions'] = Profession::active()->pluck('title', 'id');
-        $allInOneConfigs['hospitals'] = Hospital::active()->pluck('title', 'id');
-        $allInOneConfigs['about_us'] = Setting::extract('cms.about_us', '');
+        $allInOneConfigs                  = [];
+        $allInOneConfigs['professions']   = Profession::active()->pluck('title', 'id');
+        $allInOneConfigs['hospitals']     = Hospital::active()->pluck('title', 'id');
+        $allInOneConfigs['contact_email'] = Setting::extract('email.contact', '');
+        $allInOneConfigs['about_us']      = Setting::extract('cms.about_us', '');
 
         return RESTAPIHelper::response( $allInOneConfigs );
     }
@@ -406,7 +407,12 @@ class WebserviceController extends ApiBaseController {
     {
         $perPage = $request->get('limit', constants('api.config.defaultPaginationLimit'));
 
-        return RESTAPIHelper::response( $this->getUserInstance()->referrals()->paginate($perPage)->pluckMultiple([
+        $records = $this->getUserInstance()
+            ->referrals()
+            ->orderBy('updated_at', 'DESC')
+            ->paginate($perPage);
+
+        return RESTAPIHelper::response( $records->pluckMultiple([
             'first_name',
             'last_name',
             'age',

@@ -41,6 +41,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         'App\Events\UserActivated' => [
         ],
+        'App\Events\SavingReferral' => [
+            'App\Listeners\AddReferralStatusHistory',
+        ],
     ];
 
     /**

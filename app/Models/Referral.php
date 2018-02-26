@@ -2,13 +2,25 @@
 
 namespace App\Models;
 
+use App\Events\SavingReferral;
 use Illuminate\Database\Eloquent\Model;
 
 class Referral extends Model
 {
+    const DEFAULT_STATUS = 0;
+
     protected $fillable = ['first_name', 'last_name', 'age', 'phone', 'diagnosis'];
 
     protected $casts = ['status' => 'integer'];
+
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $events = [
+        'saved' => SavingReferral::class,
+    ];
 
     /**
      * @Scopes
@@ -47,5 +59,10 @@ class Referral extends Model
     public function hospital()
     {
         return $this->belongsTo(Hospital::class);
+    }
+
+    public function statusHistory()
+    {
+        return $this->hasMany(ReferralStatusHistory::class);
     }
 }
