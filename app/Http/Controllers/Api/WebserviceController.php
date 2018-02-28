@@ -86,9 +86,9 @@ class WebserviceController extends ApiBaseController {
         event(new JWTUserRegistration($user, compact('password')));
 
         if ( $user->email_verification != 1 ) {
-            return RESTAPIHelper::response([], true, 'Your account has been registered and email address requires verification. A verification code is sent to your email. Please also check Junk/Spam folder as well.');
+            return RESTAPIHelper::response(new \stdClass, true, 'Your account has been registered and email address requires verification. A verification code is sent to your email. Please also check Junk/Spam folder as well.');
         } else if ( $user->is_active != 1 ) {
-            return RESTAPIHelper::response([], true, 'Your account has been registered and requires admin approval. We will notify you once admin approves your account.');
+            return RESTAPIHelper::response(new \stdClass, true, 'Your account has been registered and requires admin approval. We will notify you once admin approves your account.');
         } else {
             return $this->login($request);
         }
@@ -177,7 +177,7 @@ class WebserviceController extends ApiBaseController {
                 return RESTAPIHelper::response('Email not found in the system.', false, 'invalid_email');
                 break;
             case \Password::RESET_LINK_SENT:
-                return RESTAPIHelper::response([], true, 'We have sent a new password to your email. Please also check Junk/Spam folder as well.' );
+                return RESTAPIHelper::response(new \stdClass, true, 'We have sent a new password to your email. Please also check Junk/Spam folder as well.' );
                 break;
             default:
                 return RESTAPIHelper::response('Unexpected error occurred.', false);
@@ -195,7 +195,7 @@ class WebserviceController extends ApiBaseController {
             'syncFirestore' => false,
         ]));
 
-        return RESTAPIHelper::response([], true, 'We have sent a new password to your email. Please also check Junk/Spam folder as well.' );
+        return RESTAPIHelper::response(new \stdClass, true, 'We have sent a new password to your email. Please also check Junk/Spam folder as well.' );
     }
 
     public function viewMyProfile(Request $request)
@@ -359,6 +359,7 @@ class WebserviceController extends ApiBaseController {
         return RESTAPIHelper::response( collect($hospital)->only([
             'id',
             'title',
+            'description',
             'address',
             'location',
             'zip_code',
@@ -400,7 +401,7 @@ class WebserviceController extends ApiBaseController {
         $referral->hospital()->associate($hospital);
         $referral->save();
 
-        return RESTAPIHelper::response([], true, 'You have successfully referral a patient.');
+        return RESTAPIHelper::response(new \stdClass, true, 'You have successfully referral a patient.');
     }
 
     public function getReferrals(Request $request)
@@ -422,6 +423,42 @@ class WebserviceController extends ApiBaseController {
             'status_text',
             'hospital_title',
         ]) );
+    }
+
+    public function saveContactUs(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'full_name' => 'required',
+            'email'     => 'required|email',
+            'phone'     => 'required',
+            'location'  => 'required',
+            'content'   => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return RESTAPIHelper::response(array_flatten($validator->messages()->toArray()), false, 'validation_error');
+        }
+
+        $body = "Hey Admin,
+
+Someone has an enquiry about LifeCare, please find the details:
+
+Name: %s
+Email: %s
+Phone: %s
+Location: %s
+Comments: %s
+";
+        $body = sprintf($body, $request->get('full_name'), $request->get('email'), $request->get('phone'), $request->get('location'), $request->get('content'));
+
+        Email::shoot('no-reply@example.com', 'Contact Us Enquiry', $body);
+
+        return RESTAPIHelper::response(new \stdClass, true, 'Form submitted successfully.');
+    }
+
+    public function criteria(Request $request)
+    {
+        return Setting::extract('cms.criteria');
     }
 
 }

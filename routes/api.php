@@ -22,6 +22,10 @@ Route::middleware(['api'])->namespace('Api')->prefix('v1')->group(function () {
     Route::post('reset-password', 'WebserviceController@resetPassword');
     Route::post('resend-verification-email', 'WebserviceController@resendVerificationEmail');
     Route::post('logout', 'WebserviceController@logout');
+    Route::post('hospital/search', 'WebserviceController@searchHospitalsByZipCode');
+    Route::post('hospital/detail', 'WebserviceController@getHospitalDetail');
+    Route::post('contact-us', 'WebserviceController@saveContactUs');
+    Route::get('criteria', 'WebserviceController@criteria');
 
     Route::match(['GET', 'PUT', 'POST'], 'test', 'WebserviceController@testMethods');
 
@@ -33,8 +37,6 @@ Route::middleware(['api'])->namespace('Api')->prefix('v1')->group(function () {
             Route::post('view/{user_id}', 'WebserviceController@viewProfile');
         });
 
-        Route::post('hospital/search', 'WebserviceController@searchHospitalsByZipCode');
-        Route::post('hospital/detail', 'WebserviceController@getHospitalDetail');
         Route::post('referral/submit', 'WebserviceController@submitReferral');
         Route::post('referral/list', 'WebserviceController@getReferrals');
 
