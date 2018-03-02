@@ -43,6 +43,30 @@ class WebserviceController extends ApiBaseController {
         $allInOneConfigs['hospitals']     = Hospital::active()->pluck('title', 'id');
         $allInOneConfigs['contact_email'] = Setting::extract('email.contact', '');
         $allInOneConfigs['about_us']      = Setting::extract('cms.about_us', '');
+        $allInOneConfigs['locations']     = [
+            'Colorado Acute Long Term Hospital - Colorado Acute Long Term Hospital',
+            'Complex Care Hospital at Ridgelake - Complex Care Hospital at Ridgelake',
+            'Complex Care Hospital at Tenaya - Complex Care Hospital at Tenaya',
+            'LifeCare Hospitals of Chester County - LifeCare Hospitals of Chester County',
+            'LifeCare Hospitals of Dallas - LifeCare Hospitals of Dallas',
+            'LifeCare Hospitals of Dayton - LifeCare Hospitals of Dayton',
+            'LifeCare Hospitals of Fort Worth - LifeCare Hospitals of Fort Worth',
+            'LifeCare Hospitals of Mechanicsburg - LifeCare Hospitals of Mechanicsburg',
+            'LifeCare Hospitals of North Carolina - LifeCare Hospitals of North Carolina',
+            'LifeCare Hospitals of Pittsburgh -  LifeCare Behavioral Hospital of Pittsburgh',
+            'LifeCare Hospitals of Pittsburgh - Alle-Kiski Campus',
+            'LifeCare Hospitals of Pittsburgh - Main Campus',
+            'LifeCare Hospitals of Pittsburgh - Suburban Campus',
+            'LifeCare Hospitals of Pittsburgh - Transitional Care Center at Suburban Campus',
+            'LifeCare Hospitals of Plano - LifeCare Hospitals of Plano',
+            'LifeCare Hospitals of San Antonio - LifeCare Hospitals of San Antonio',
+            'LifeCare Hospitals of Shreveport - Main Campus',
+            'LifeCare Hospitals of Shreveport - North Campus',
+            'LifeCare Hospitals of Shreveport - Pierremont Campus',
+            'LifeCare Hospitals of Wisconsin - LifeCare Hospitals of Wisconsin',
+            'Tahoe Pacific Hospitals - Tahoe Pacific Hospitals – Meadows',
+            'Tahoe Pacific Hospitals - Tahoe Pacific Hospitals – North',
+        ];
 
         return RESTAPIHelper::response( $allInOneConfigs );
     }
