@@ -464,6 +464,13 @@ class WebserviceController extends ApiBaseController {
 
     public function saveContactUs(Request $request)
     {
+        $requestData              = [];
+        $requestData['email']     = RijndaelEncryption::decrypt($request->get('email', ''));
+        $requestData['full_name'] = RijndaelEncryption::decrypt($request->get('full_name', ''));
+        $requestData['phone']     = RijndaelEncryption::decrypt($request->get('phone', ''));
+
+        $request->merge($requestData);
+
         $validator = Validator::make($request->all(), [
             'full_name' => 'required',
             'email'     => 'required|email',
@@ -488,7 +495,11 @@ Reason: %s
 Location: %s
 Comments: %s
 ";
-        $body = sprintf($body, $request->get('full_name'), $request->get('email'), $request->get('phone'), $request->get('reason'), $request->get('location'), $request->get('content'));
+        $full_name = $request->get('full_name', '');
+        $email     = $request->get('email', '');
+        $phone     = $request->get('phone', '');
+
+        $body = sprintf($body, $full_name, $email, $phone, $request->get('reason'), $request->get('location'), $request->get('content'));
 
         Email::shoot('no-reply@example.com', 'Contact Us Enquiry', $body);
 
