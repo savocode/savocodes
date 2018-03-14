@@ -25,7 +25,7 @@ class RESTAPIHelper {
 
 		}
 
-	    return response()->json( $response, 200, [], JSON_PRESERVE_ZERO_FRACTION );
+	    return response()->json( $response, 200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_UNICODE );
 	}
 
     public static function setPagination(\Illuminate\Pagination\LengthAwarePaginator $paginator)

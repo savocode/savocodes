@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Classes\FirebaseHandler;
+use App\Classes\RijndaelEncryption;
 use App\Events\Api\JWTUserUpdate;
 use App\Events\BlockEvent;
 use App\Events\MessagePayment;
@@ -47,6 +48,13 @@ class User extends Authenticatable
 
     const API_ALLOW_ROLES = [
         self::ROLE_PHYSICIANS,
+    ];
+
+    /**
+     * Fields that will be saved encrypted in database
+     */
+    protected static $encryptedFields = [
+        'first_name', 'last_name', 'email', 'phone', 'password'
     ];
 
     /**
@@ -192,6 +200,16 @@ class User extends Authenticatable
         $exist = self::whereEmailVerification($code)->count();
 
         return $exist ? self::generateUniqueVerificationCode() : $code;
+    }
+
+    public static function getEncryptionFields()
+    {
+        return (array) self::$encryptedFields;
+    }
+
+    public function routeNotificationForMail()
+    {
+        return RijndaelEncryption::decrypt($this->email);
     }
 
     public function activate()
@@ -472,6 +490,11 @@ class User extends Authenticatable
     public function getFullNameAttribute()
     {
         return ltrim($this->attributes['first_name'] . ' ' . $this->attributes['last_name']);
+    }
+
+    public function getFullNameDecryptedAttribute()
+    {
+        return RijndaelEncryption::decrypt($this->attributes['first_name']) . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
     }
 
     public function getProfilePicturePathAttribute()

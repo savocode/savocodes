@@ -19,6 +19,7 @@ class Validation extends Validator
         "us_phone_standards"    => "The :attribute may only contain numbers, dashes, parenthesis and spaces.",
         "phone"                 => "Please enter your valid phone number in international format.",
         "unique_phone"          => "The :attribute already exists.",
+        "unique_encrypted"      => "The :attribute already exists.",
         "decimal"               => "The :attribute is not a valid decimal.",
         "edu"                   => "The :attribute value should end with .edu",
     ];
@@ -169,6 +170,33 @@ class Validation extends Validator
         }
 
         return call_user_func_array(array('parent', 'validateUnique'), [
+            $attribute,
+            $value,
+            $parameters,
+            $validator,
+        ]);
+    }
+
+    /**
+     * Validate value after encryption which stored in databsae.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @return bool
+     */
+    protected function validateUniqueEncrypted( $attribute, $value, $parameters, $validator )
+    {
+        $value = \App\Classes\RijndaelEncryption::encrypt($value);
+        $method = 'validateUnique';
+
+        // First parameter which trigger rule to be executed it is optional, will trigger function if method exist.
+        if ( preg_match('%^\[(\w+)\]$%', $parameters[0], $detectMethod) ) {
+            $detectMethod = camel_case('validate_'.$detectMethod[1]);
+            $method = method_exists($this, $detectMethod) ? $detectMethod : $method;
+            array_shift($parameters);
+        }
+
+        return call_user_func_array(array($this, $method), [
             $attribute,
             $value,
             $parameters,

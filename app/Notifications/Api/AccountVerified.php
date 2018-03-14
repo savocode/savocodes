@@ -50,7 +50,7 @@ class AccountVerified extends Notification
     {
         $mailMessage = (new MailMessage)
             ->subject( Email::makeSubject('Account Verified') )
-            ->greeting($this->user->full_name)
+            ->greeting($this->user->full_name_decrypted)
             ->line('Thank you for verifying your account, you are now able to login and use our services.');
 
         return $mailMessage;

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Classes\Email;
+use App\Classes\RijndaelEncryption;
 use App\Events\Api\JWTUserLogin;
 use App\Events\Api\JWTUserLogout;
 use App\Events\Api\JWTUserRegistration;
@@ -73,9 +74,10 @@ class WebserviceController extends ApiBaseController {
 
     public function register(UserRegisterRequest $request)
     {
-        $input                       = $request->all();
-        $input['password']           = bcrypt($password = str_random(12));
-        $input['role_id']            = User::ROLE_PHYSICIANS;
+        $input             = $request->all();
+        // $input['password'] = RijndaelEncryption::decrypt($request->get('password', ''));
+        $input['password'] = bcrypt($input['password']);
+        $input['role_id']  = User::ROLE_PHYSICIANS;
 
         if ( $request->has('phone') ) {
             try {
@@ -98,16 +100,22 @@ class WebserviceController extends ApiBaseController {
             }
         }
 
+        // Re-Encrypt Value
+        foreach (collect(User::getEncryptionFields()) as $field) {
+            $input[$field] = RijndaelEncryption::encrypt($input[$field]);
+        }
+
+        info($input);
         $user = User::create($input);
         $user = User::find($user->id); // Just because we need complete model attributes for event based activities
 
         // HIGH | TODO: Change is_active flag to `0` so that admin can approve this account.
-        $user->email_verification = 1;
-        $user->is_active          = 1;
+        $user->email_verification = str_random(100);
+        $user->is_active          = 0;
         $user->save();
 
         // Fire user registration event
-        event(new JWTUserRegistration($user, compact('password')));
+        event(new JWTUserRegistration($user));
 
         if ( $user->email_verification != 1 ) {
             return RESTAPIHelper::response(new \stdClass, true, 'Your account has been registered and email address requires verification. A verification code is sent to your email. Please also check Junk/Spam folder as well.');
@@ -120,8 +128,14 @@ class WebserviceController extends ApiBaseController {
 
     public function login(Request $request)
     {
+        /*$requestData             = [];
+        $requestData['email']    = RijndaelEncryption::decrypt($request->get('email', ''));
+        $requestData['password'] = RijndaelEncryption::decrypt($request->get('password', ''));
+
+        $request->merge($requestData);*/
+
         $validator = Validator::make($request->all(), [
-            'email'        => 'required|email',
+            'email'        => 'required',
             'password'     => 'required',
             'device_type'  => 'in:ios,android',
             'device_token' => 'string',
@@ -131,13 +145,7 @@ class WebserviceController extends ApiBaseController {
             return RESTAPIHelper::response(array_flatten($validator->messages()->toArray()), false, 'validation_error');
         }
 
-        // Login with email OR username supported!
-        if ( valid_email($request->get('email')) ) {
-            $input = $request->only(['email', 'password']);
-        } else {
-            $request->merge(['username' => $request->get('email')]);
-            $input = $request->only(['username', 'password']);
-        }
+        $input = $request->only(['email', 'password']);
 
         // Allow only following role
         $input['role_id'] = User::ROLE_PHYSICIANS;
@@ -335,17 +343,22 @@ class WebserviceController extends ApiBaseController {
     public function searchHospitalsByZipCode(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'zipcode' => 'required|min:5|max:7',
+            'zipcode' => 'required_without:city|min:5|max:7',
+            'city'    => 'required_without:zipcode',
         ]);
 
         if ($validator->fails()) {
             return RESTAPIHelper::response(array_flatten($validator->messages()->toArray()), false, 'validation_error');
         }
 
-        $zipCode = preg_replace('%[^a-zA-Z0-9]%', '', $request->get('zipcode')); // replace everything except alpha-numeric
         $perPage = $request->get('limit', constants('api.config.defaultPaginationLimit'));
 
-        $hospitals = Hospital::active()->where('zip_code', '=', $zipCode)->paginate($perPage);
+        if ( $request->has('zipcode') ) {
+            $zipCode = preg_replace('%[^a-zA-Z0-9]%', '', $request->get('zipcode')); // replace everything except alpha-numeric
+            $hospitals = Hospital::active()->where('zip_code', '=', $zipCode)->paginate($perPage);
+        } else {
+            $hospitals = Hospital::active()->where('location', 'like', '%'.$request->get('city').'%')->paginate($perPage);
+        }
 
         return RESTAPIHelper::response( $hospitals->pluckMultiple([
             'id',
@@ -456,6 +469,7 @@ class WebserviceController extends ApiBaseController {
             'email'     => 'required|email',
             'phone'     => 'required',
             'location'  => 'required',
+            'reason'    => 'required',
             'content'   => 'required',
         ]);
 
@@ -470,10 +484,11 @@ Someone has an enquiry about LifeCare, please find the details:
 Name: %s
 Email: %s
 Phone: %s
+Reason: %s
 Location: %s
 Comments: %s
 ";
-        $body = sprintf($body, $request->get('full_name'), $request->get('email'), $request->get('phone'), $request->get('location'), $request->get('content'));
+        $body = sprintf($body, $request->get('full_name'), $request->get('email'), $request->get('phone'), $request->get('reason'), $request->get('location'), $request->get('content'));
 
         Email::shoot('no-reply@example.com', 'Contact Us Enquiry', $body);
 
@@ -482,7 +497,7 @@ Comments: %s
 
     public function criteria(Request $request)
     {
-        return Setting::extract('cms.criteria');
+        return RESTAPIHelper::response(Setting::extract('cms.criteria'), true);
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Notifications\Api;
 
 use App\Classes\Email;
+use App\Classes\RijndaelEncryption;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -17,17 +18,14 @@ class Registration extends Notification
      */
     public $user;
 
-    public $password;
-
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $password)
+    public function __construct($user)
     {
         $this->user = $user;
-        $this->password = $password;
     }
 
     /**
@@ -50,13 +48,17 @@ class Registration extends Notification
     public function toMail($notifiable)
     {
         $mailMessage = (new MailMessage)
-            ->subject( Email::makeSubject('Account Registered - Wait for Approval') )
-            ->greeting($this->user->full_name);
+            ->subject( Email::makeSubject('Verify your Account') )
+            ->greeting($this->user->full_name_decrypted);
 
-        $mailMessage
-            ->line('We have received your registration details on ' . constants('global.site.name') . '. Please find your login credentials below.')
-            ->line(sprintf('Email / Password: %s / %s', $this->user->email, $this->password))
-            ->line('Currently your account is in pending state and requires admin to approve first. We will notify you upon activation.');
+        if ( $this->user->email_verification != '1' ) {
+            $mailMessage
+                ->line('We have received your registration details on ' . constants('global.site.name') . '. Please click the following button to verify your account')
+                ->action('Verify Account', route('api.verification.email', ['code' => $this->user->email_verification]) );
+        } else {
+            $mailMessage
+                ->line('We have received your registration details on ' . constants('global.site.name') . '.');
+        }
 
         $mailMessage
             ->line('Thank you for using our application.');

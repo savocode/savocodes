@@ -12,11 +12,7 @@
 */
 use App\Models\User;
 use App\Classes\FireStoreHandler;
-use App\Models\Trip;
-use App\Models\TripRide;
-use App\Models\TripRideOffer;
-use App\Models\TripMember;
-use App\Models\PassengerCard;
+use App\Classes\RijndaelEncryption;
 
 Route::prefix('')->namespace('Frontend')->group(function () {
     Route::get('verification/email', 'Auth\LoginController@emailVerification')->name('api.verification.email'); // For direct password reset
@@ -122,6 +118,42 @@ Route::prefix('backend')->namespace('Backend')->group(function () {
 
 Route::get('/test', function () {
 
+    dd(RijndaelEncryption::encrypt('name'));
+
+    dd(collect(User::getEncryptionFields())->exclude('password')->concat(['old_pwd']));
+
+    /*$users = User::all();
+    foreach ($users as $user) {
+        // $user->first_name = \App\Classes\RijndaelEncryption::encrypt($user->first_name);
+        // $user->phone      = \App\Classes\RijndaelEncryption::encrypt($user->phone);
+        // $user->email      = \App\Classes\RijndaelEncryption::encrypt($user->email);
+        // $user->last_name  = \App\Classes\RijndaelEncryption::encrypt($user->last_name);
+        $user->password  = bcrypt('17eFwzMTTeC8ToIISebueQ==');
+
+        $user->save();
+    }
+
+    dd('dDONE');*/
+
+    // dd( \App\Classes\RijndaelEncryption::decrypt('lxXNOYlO1kE2ZtPbk+AHkg==') );
+    // dd(mb_convert_encoding(\App\Classes\RijndaelEncryption::decrypt('jkVhj2xLcnLxL/szizcbgA=='), 'UTF-8'));
+    /*$text = \App\Classes\RijndaelEncryption::decrypt('jkVhj2xLcnLxL/szizcbgA==');
+    dd(mb_detect_encoding($text, mb_detect_order(), true));
+    dd(iconv(mb_detect_encoding($text, mb_detect_order(), true), "ASCII", $text));*/
+
+    $text = '1';
+    $encrypted = \App\Classes\RijndaelEncryption::encrypt($text);
+    dd($encrypted);
+    $value = trim(\App\Classes\RijndaelEncryption::decrypt($encrypted));
+    dd(($text === $value), $value);
+    $encrypted = \App\Classes\RijndaelEncryption::encrypt($value);
+    // $encrypted = \App\Classes\RijndaelEncryption::encrypt('abc123');
+    dd($encrypted);
+    $value = \App\Classes\RijndaelEncryption::decrypt('');
+    dd($value);
+
+    return;
+
     $ref = new \App\Models\Referral([
         'first_name' => 'test',
     ]);
@@ -153,7 +185,7 @@ Route::get('/debug/rest-api', function() {
 
 Route::get('/debug/query-debugger', function() {
     $query = <<<LOG
-    select * from `trips` where `id` in (?, ?, ?, ?, ?) - a:5:{i:0;i:66;i:1;i:76;i:2;i:77;i:3;i:78;i:4;i:79;}
+    select * from `users` where `email` = ? and `role_id` = ? and `users`.`deleted_at` is null limit 1 - a:2:{i:0;s:44:"JwIIPzqJ4GTGBwWYcP57W5fJC2ojlp5MMydP9e6b1ns=";i:1;i:3;}
 LOG;
 
     list($query, $bindings) = explode(' - ', $query);

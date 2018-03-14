@@ -49,6 +49,13 @@ class AppServiceProvider extends ServiceProvider
             });
         });
 
+        Collection::macro('exclude', function($remove) {
+            $remove = !is_array($remove) ? [$remove] : $remove;
+            return $this->filter(function ($item, $itemKey) use($remove) {
+                return in_array($item, $remove, true) ? false : true;
+            });
+        });
+
         /**
          * Unfortunately, laravel doesn't provide parsed body in multipart/form-data via PUT http verb
          * here is the extended functionality

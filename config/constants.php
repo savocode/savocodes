@@ -9,6 +9,14 @@ return [
             'tinyName' => 'LC',
             'version' => '1.0', // For internal code comparison (if any)
         ],
+
+        'encryption' => [
+            'keySize' => 128,
+            'passPhraseKey' => 'abcdef', // Is used to derived pseudo-random
+            'SaltValueKey' => 'hijklm', // Is used along with passphrase to generate password
+            'NoOfIteration' => 3, // Number of Iterations to hash password
+            'InitializationVector' => 'HR$2pIjHR$2pIj12', // This value is required to encrypt the first block of plaintext data
+        ]
     ],
 
     // Related to web-services

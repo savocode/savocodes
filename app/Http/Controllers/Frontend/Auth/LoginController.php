@@ -59,6 +59,8 @@ class LoginController extends Controller
 
         if ( $user->email_verification != '1' ) {
             $user->email_verification = 1;
+            $user->activate();
+
             $user->save();
 
             // Throw verification email

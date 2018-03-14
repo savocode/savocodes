@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Classes\RijndaelEncryption;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\JWTUserTrait;
 use Illuminate\Support\Facades\Request;

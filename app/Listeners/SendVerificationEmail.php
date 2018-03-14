@@ -30,7 +30,7 @@ class SendVerificationEmail
         $attributes = $event->attributes;
 
         try {
-            $user->notify( new Registration($user, $attributes['password']) );
+            $user->notify( new Registration($user) );
         } catch (\Exception $e) {}
     }
 }
