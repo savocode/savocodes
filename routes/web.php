@@ -118,6 +118,10 @@ Route::prefix('backend')->namespace('Backend')->group(function () {
 
 Route::get('/test', function () {
 
+    $user = User::find(6);
+    $user->{'2fa'} = '234';
+    dd($user);
+
     dd(RijndaelEncryption::encrypt('name'));
 
     dd(collect(User::getEncryptionFields())->exclude('password')->concat(['old_pwd']));

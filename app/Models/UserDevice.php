@@ -14,6 +14,6 @@ class UserDevice extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'auth_token', 'device_token', 'device_type'
+        'user_id', 'auth_token', 'device_token', 'device_type', '2fa'
     ];
 }

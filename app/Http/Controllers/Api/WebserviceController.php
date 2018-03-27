@@ -44,6 +44,12 @@ class WebserviceController extends ApiBaseController {
         $allInOneConfigs['hospitals']     = Hospital::active()->pluck('title', 'id');
         $allInOneConfigs['contact_email'] = Setting::extract('email.contact', '');
         $allInOneConfigs['about_us']      = Setting::extract('cms.about_us', '');
+        $allInOneConfigs['reasons']     = [
+            'App feedback',
+            'Referral feedback',
+            'Approval/Disapproval feedback',
+            'Other',
+        ];
         $allInOneConfigs['locations']     = [
             'Colorado Acute Long Term Hospital - Colorado Acute Long Term Hospital',
             'Complex Care Hospital at Ridgelake - Complex Care Hospital at Ridgelake',
@@ -165,7 +171,14 @@ class WebserviceController extends ApiBaseController {
             return RESTAPIHelper::response($e->getMessage(), false, $e->getResolvedErrorCode());
         }
 
-        if ( constants('api.config.allowSingleDeviceLogin') ) {
+        $userData->{'2fa'} = mt_rand(111111, 999999);
+        $userData->save();
+
+        $userData->notify( new \App\Notifications\Api\UserTwoFactorVerification($userData) );
+
+        return RESTAPIHelper::response(new \stdClass, true, 'Please enter 6 digit code which we\'ve sent in to your email.');
+
+        /*if ( constants('api.config.allowSingleDeviceLogin') ) {
             $userData->removeDevice( $token );
         }
 
@@ -177,7 +190,7 @@ class WebserviceController extends ApiBaseController {
 
         event(new JWTUserLogin($userData));
 
-        return RESTAPIHelper::response( $result );
+        return RESTAPIHelper::response( $result );*/
     }
 
     public function logout(Request $request)
@@ -228,6 +241,38 @@ class WebserviceController extends ApiBaseController {
         ]));
 
         return RESTAPIHelper::response(new \stdClass, true, 'We have sent a new password to your email. Please also check Junk/Spam folder as well.' );
+    }
+
+    public function verify2FaCode(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+            'code'  => 'required|string|size:6',
+        ]);
+
+        if ($validator->fails()) {
+            return RESTAPIHelper::response(array_flatten($validator->messages()->toArray()), false, 'validation_error');
+        }
+
+        $userData = User::users()
+            ->where('2fa', $request->get('code', ''))
+            ->whereEmail($request->get('email', ''))
+            ->first();
+
+        if ( !$userData )
+            return RESTAPIHelper::response('Account does not exist in system.', false, 'invalid_account');
+
+        $token = JWTAuth::fromUser($userData);
+
+        // Add user device
+        $userData->addDevice( $request->get('device_token', ''), $request->get('device_type', null), $token );
+
+        // Generate user response
+        $result = $this->generateUserProfileResponse( $userData, $token );
+
+        event(new JWTUserLogin($userData));
+
+        return RESTAPIHelper::response( $result );
     }
 
     public function viewMyProfile(Request $request)

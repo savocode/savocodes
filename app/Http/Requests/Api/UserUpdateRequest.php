@@ -77,9 +77,6 @@ class UserUpdateRequest extends Request {
         $encryptFields = collect(User::getEncryptionFields())
             ->exclude([
                 'phone'
-            ])
-            ->concat([
-                'old_pwd'
             ]);
 
         foreach ($encryptFields as $field) {

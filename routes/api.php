@@ -19,6 +19,7 @@ Route::middleware(['api'])->namespace('Api')->prefix('v1')->group(function () {
 
     Route::post('register', 'WebserviceController@register');
     Route::post('login', 'WebserviceController@login');
+    Route::post('2fa-auth', 'WebserviceController@verify2FaCode');
     Route::post('reset-password', 'WebserviceController@resetPassword');
     Route::post('resend-verification-email', 'WebserviceController@resendVerificationEmail');
     Route::post('logout', 'WebserviceController@logout');
