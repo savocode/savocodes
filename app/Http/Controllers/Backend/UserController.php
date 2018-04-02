@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Models\City;
 use App\Models\Country;
+use App\Models\Profession;
 use App\Models\School;
 use App\Models\State;
 use App\Models\Transaction;
@@ -35,7 +36,7 @@ class UserController extends BackendController
 
     public function __construct()
     {
-        $this->thisModule['undeleteable'] = array_values(array_unique(array_merge([User::ADMIN_USER_ID, User::CLIENT_USER_ID], $this->thisModule['undeleteable'])));
+        $this->thisModule['undeleteable'] = array_values(array_unique(array_merge([User::ADMIN_USER_ID], $this->thisModule['undeleteable'])));
 
         View::share([
             'moduleProperties' => $this->thisModule,
@@ -44,16 +45,14 @@ class UserController extends BackendController
 
     public function index()
     {
-        $states     = State::listStates(Country::DEFAULT_COUNTRY_ID)->toArray();
-        $firstState = key($states);
-        $states     = ['' => 'Select State'] + $states;
-        $cities     = ['' => 'Select City'] + City::listCities($firstState)->toArray();
-        $genders    = ['' => 'Select Gender', 'Male' => 'Male', 'Female' => 'Female'];
-        $ageRanges  = ['' => 'Select Age Range', '10-17' => '10-17', '18-25' => '18-25', '26-35' => '26-35', '36-50' => '36-50', '50' => '50+'];
-        $userTypes  = ['' => 'All', User::ROLE_NORMAL_USER => 'Passenger', User::ROLE_DRIVER => 'Driver'];
-        $schools    = ['' => 'Select School'] + School::pluck('name', 'name')->toArray();
+        $states         = State::listStates(Country::DEFAULT_COUNTRY_ID)->toArray();
+        $firstState     = key($states);
+        $states         = ['' => 'Select State'] + $states;
+        $cities         = ['' => 'Select City'] + City::listCities($firstState)->toArray();
+        $professions    = ['' => 'Select Profession'] + Profession::all()->pluck('title', 'id')->toArray();
+        $genders        = ['' => 'Select Gender', 'Male' => 'Male', 'Female' => 'Female'];
 
-        return backend_view($this->thisModule['viewDir'] . '.index', compact('states', 'cities', 'genders', 'ageRanges', 'userTypes', 'schools'));
+        return backend_view($this->thisModule['viewDir'] . '.index', compact('states', 'cities', 'professions', 'genders'));//, compact('states', 'cities', 'genders', 'ageRanges', 'userTypes', 'schools'));
     }
 
     public function verificationListPending()
@@ -113,9 +112,8 @@ class UserController extends BackendController
         $state       = $request->get('state');
         $city        = $request->get('city');
         $gender      = $request->get('gender');
-        $age         = $request->get('age');
-        $role_id     = $request->get('role_id');
-        $school_name = $request->get('school_name');
+       // $age         = $request->get('age');
+        $profession  = $request->get('profession');
 
         $query = User::users();
 
@@ -127,8 +125,8 @@ class UserController extends BackendController
             $query->where('city', $city);
         }
 
-        if ($role_id) {
-            $query->where('role_id', $role_id);
+        if ($profession) {
+            $query->where('profession_id', $profession);
         }
 
         if ($gender) {
@@ -137,57 +135,29 @@ class UserController extends BackendController
             });
         }
 
-        if ($age) {
-            $ageArray = explode('-', $age);
-            $query->whereHas('metas', function ($query) use ($ageArray) {
-                if (isset($ageArray[1])) {
-                    $query->where('key', 'birth_date')
-                        ->whereRaw('STR_TO_DATE(value, \'%m/%d/%Y\') >= "' . Carbon::now()->subYear($ageArray[1])->toDateString() . '"')
-                        ->whereRaw('STR_TO_DATE(value, \'%m/%d/%Y\') <= "' . Carbon::now()->subYear($ageArray[0])->toDateString() . '"');
-                } else {
-                    $query->where('key', 'birth_date')
-                        ->whereRaw('STR_TO_DATE(value, \'%m/%d/%Y\') < "' . Carbon::now()->subYear($ageArray[0])->toDateString() . '"');
-                }
-            });
-        }
-
-        if ($school_name) {
-            $query->whereHas('metas', function ($query) use ($school_name) {
-                $query->where('key', 'school_name')->where('value', 'LIKE', '%' . $school_name . '%');
-            });
-        }
-
         return $datatables->eloquent($query)
-            ->filter(function ($query) {
-                if (request()->has('search.value')) {
-                    $query->search(request('search.value'));
-                }
-            }, false)
+//            ->filter(function ($query) {
+//                if (request()->has('search.value')) {
+//                    $query->search(request('search.value'));
+//                }
+//            }, false)
             ->order(function ($query) {
-
-                $column = data_get(request()->input('columns'), request()->input('order.0.column'), []);
-
-                if (in_array($column['data'], ['commission_earned'])) {
-                    $query->leftJoin((new Transaction)->getTable(), (new User)->getTable() . '.id', '=', (new Transaction)->getTable() . '.receiver_id')
-                        ->select([(new User)->getTable() . '.*', (new Transaction)->getTable() . '.' . $column['data']])
-                        ->orderBy(\DB::raw('SUM(' . (new Transaction)->getTable() . '.' . $column['data'] . ')'), request()->input('order.0.dir'))
-                        ->groupBy((new User)->getTable() . '.id');
-                } else {
-                    $query->orderBy($column['data'], request()->input('order.0.dir'));
-                }
-
+                $query->latest();
             })
             ->editColumn('first_name', function ($user) {
-                return $user->first_name;
+                return $user->first_name_decrypted;
             })
             ->editColumn('last_name', function ($user) {
-                return $user->last_name;
+                return $user->last_name_decrypted;
+            })
+            ->editColumn('email', function ($user) {
+                return $user->email_decrypted;
             })
             ->editColumn('active', function ($user) {
                 return $user->status_text_formatted;
             })
-            ->editColumn('role_id', function ($user) {
-                return ucfirst($user->user_role_key_web);
+            ->editColumn('profession_id', function ($user) {
+                return ucfirst($user->profession_title);
             })
             ->editColumn('profile_picture', function ($user) {
                 return '<a href="' . $user->profile_picture_auto . '" class="cboxImages">' . \Html::image($user->profile_picture_path, null, ['class' => 'img-responsive', 'style' => 'max-width: 50px;max-height: 50px']) . '</a>';
@@ -207,6 +177,7 @@ class UserController extends BackendController
     public function detail(User $record)
     {
         $userMeta = $record->getMetaMulti(UserMeta::GROUPING_PROFILE);
+
         return backend_view($this->thisModule['viewDir'] . '.detail', compact('record', 'userMeta'));
     }
 

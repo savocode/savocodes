@@ -11,21 +11,21 @@ return [
         ],
 
         'encryption' => [
-            'keySize' => 128,
-            'passPhraseKey' => 'abcdef', // Is used to derived pseudo-random
-            'SaltValueKey' => 'hijklm', // Is used along with passphrase to generate password
-            'NoOfIteration' => 3, // Number of Iterations to hash password
-            'InitializationVector' => 'HR$2pIjHR$2pIj12', // This value is required to encrypt the first block of plaintext data
+            'keySize'               => 128,
+            'passPhraseKey'         => 'abcdef', // Is used to derived pseudo-random
+            'SaltValueKey'          => 'hijklm', // Is used along with passphrase to generate password
+            'NoOfIteration'         => 3, // Number of Iterations to hash password
+            'InitializationVector'  => 'HR$2pIjHR$2pIj12', // This value is required to encrypt the first block of plaintext data
         ]
     ],
 
     // Related to web-services
     'api' => [
         'config' => [
-            'allowSingleDeviceLogin' => false,
-            'sendHiddenLogoutPush' => false,
+            'allowSingleDeviceLogin'    => false,
+            'sendHiddenLogoutPush'      => false,
 
-            'defaultPaginationLimit' => 20,
+            'defaultPaginationLimit'    => 20,
         ],
 
         'separator' => '-,-',
@@ -46,17 +46,17 @@ return [
 
         'theme' => [
             'configuration' => [
-                'show_navigation_messages' => false,
+                'show_navigation_messages'      => false,
                 'show_navigation_notifications' => false,
-                'show_navigation_flags' => false,
+                'show_navigation_flags'         => false,
             ],
 
             'modules' => [
-                'date_format' => 'j F, Y',
-                'datetime_format' => 'j M Y, h:i:s A',
-                'time_format' => 'h:i:s A',
+                'date_format'       => 'j F, Y',
+                'datetime_format'   => 'j M Y, h:i:s A',
+                'time_format'       => 'h:i:s A',
 
-                'tiny_loader' => 'backend/assets/dist/img/tiny-loader.gif',
+                'tiny_loader'       => 'backend/assets/dist/img/tiny-loader.gif',
             ],
         ],
 
@@ -64,58 +64,78 @@ return [
             'menu' => [
                 [
                     'label' => 'Dashboard',
-                    'path' => '/dashboard',
-                    'icon' => 'fa fa-dashboard',
+                    'path'  => '/dashboard',
+                    'icon'  => 'fa fa-dashboard',
                 ],
                 'users' => [
-                    'label' => 'Users Management',
-                    'path' => '/users',
+                    'label'     => 'Users',
+                    'path'      => '/users',
                     'regexPath' => '%(/users(/edit/\d+|/verification|/index)?)|(/user-stats(/detail/\d+|/index)?)%',
-                    'icon' => 'fa fa-users',
-                    'submenu' => [
+                    'icon'      => 'fa fa-users',
+                    'submenu'   => [
                         [
-                            'label' => 'All Users',
-                            'path' => '/users/index',
-                            'icon' => 'fa fa-users',
+                            'label'     => 'All Users',
+                            'path'      => '/users/index',
+                            'icon'      => 'fa fa-user',
                             'regexPath' => '%/users(/index|/detail/\d+|/purchases/\d+)?|(/user-stats(/detail/\d+|/index)?)$%',
                         ],
+//                        [
+//                            'label' => 'Un-Verified Users',
+//                            'path'  => '/users/verified',
+//                            'icon'  => 'fa fa-times',
+//                            'regexPath' => false,
+//                        ],
+                    ],
+                ],
+                'hospitals' => [
+                    'label'     => 'Hospital Management',
+                    'path'      => '/hospitals',
+                    'regexPath' => '%(/hospital(/edit/\d+|/verification|/index)?)|(/user-stats(/detail/\d+|/index)?)%',
+                    'icon'      => 'fa fa-medkit',
+                    'submenu'   => [
                         [
-                            'label' => 'Verification Request',
-                            'path' => '/users/verification',
-                            'icon' => 'fa fa-flag-checkered',
+                            'label'     => 'All Hospitals',
+                            'path'      => '/hospitals/index',
+                            'icon'      => 'fa fa-hospital-o',
+                            'regexPath' => '%/hospitals(/index|/detail/\d+|/create/\d+)?|(/user-stats(/detail/\d+|/index)?)$%',
+                        ],
+                        [
+                            'label' => 'Hospital Locations',
+                            'path'  => '/hospitals/location',
+                            'icon'  => 'fa fa-location-arrow',
                             'regexPath' => false,
                         ],
                     ],
                 ],
-                'trips' => [
-                    'label' => 'Trips',
-                    'path' => '/trips',
-                    'regexPath' => '%(/trips(/payments|/canceled)?)%',
-                    'icon' => 'fa fa-cab',
+                'referrals' => [
+                    'label' => 'Referrals',
+                    'path' => '/referrals',
+                    'regexPath' => '%(/referrals(/approved|/canceled)?)%',
+                    'icon' => 'fa fa-user-plus',
                     'submenu' => [
                         [
-                            'label' => 'Trip Payments',
-                            'path' => '/trips/payments',
-                            'regexPath' => '%(/trips/payments)$%',
-                            'icon' => 'fa fa-dollar',
+                            'label' => 'Approved Referrals',
+                            'path' => '/referrals/approved',
+                            'regexPath' => '%(/referrals/approved)$%',
+                            'icon' => 'fa fa-check-square-o',
                         ],
                         [
-                            'label' => 'Canceled Trips',
-                            'path' => '/trips/canceled',
-                            'regexPath' => '%(/trips/canceled)$%',
+                            'label' => 'Rejected Referrals',
+                            'path' => '/referrals/canceled',
+                            'regexPath' => '%(/referrals/canceled)$%',
                             'icon' => 'fa fa-ban',
                         ],
                     ],
                 ],
-                'coupons' => [
-                    'label' => 'Promo Codes',
-                    'path' => '/promo-codes/index',
-                    'regexPath' => '%/promo-codes(/index|/create|/edit/\d+)?$%',
-                    'icon' => 'fa fa-money',
+                'professions' => [
+                    'label' => 'Professions',
+                    'path' => '/professions/index',
+                    'regexPath' => '%/professions(/index|/create|/edit/\d+)?$%',
+                    'icon' => 'fa fa-yelp',
                 ],
-                'reviews' => [
-                    'label' => 'Reviews & Ratings',
-                    'path' => '/reviews/index',
+                'criteria' => [
+                    'label' => 'Criteria',
+                    'path' => '/criteria/index',
                     'regexPath' => '%(/reviews/index)$%',
                     'icon' => 'fa fa-star',
                 ],

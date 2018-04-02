@@ -6,7 +6,7 @@ use App\Models\MetaData;
 
 class UserMeta extends MetaData
 {
-    const GROUPING_DRIVER  = 'driver';
+   // const GROUPING_DRIVER  = 'driver';
     const GROUPING_PROFILE = 'profile';
 
     // Possible meta values for user object:

@@ -11,7 +11,7 @@ var appConfig = (function(){
                     "aTargets": appConfig.get( 'dt.aoColumnDefs.aTargets', [ -1 ] )
                 }],
                 "order": appConfig.get( 'dt.order', [[ 0, 'asc']] ),
-                "searching": appConfig.get( 'dt.searching', true )
+                "searching": appConfig.get( 'dt.searching', false )
             });
 
             appConfig.set('app.dataTable', dataTable)

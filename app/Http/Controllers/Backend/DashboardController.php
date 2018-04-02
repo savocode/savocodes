@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Classes\RijndaelEncryption;
 use App\Models\City;
 use App\Models\Setting;
 use App\Models\User;
@@ -28,8 +29,8 @@ class DashboardController extends BackendController
 
         $stats                       = new \stdClass;
         $stats->total_users          = $allUsers->count();
-        $stats->total_drivers        = User::whereRoleId(User::ROLE_DRIVER)->count();
-        $stats->total_passengers     = User::whereRoleId(User::ROLE_NORMAL_USER)->count();
+        $stats->total_hospital       = User::whereRoleId(User::ROLE_HOSPITAL_EMPLOYEES)->count();
+        $stats->total_physician      = User::whereRoleId(User::ROLE_PHYSICIANS)->count();
         $stats->total_verified_users = $verifiedUsers->count();
 
         return backend_view('dashboard', compact('stats'));
@@ -44,7 +45,8 @@ class DashboardController extends BackendController
     {
         $record = Auth::user();
 
-        if ($request->getMethod() == 'GET') {
+        if ($request->getMethod() == 'GET')
+        {
             return backend_view('settings.profile', compact('record'));
         }
 
@@ -55,15 +57,22 @@ class DashboardController extends BackendController
             'password'   => ($request->get('password') != '' ? 'min:6' : ''),
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails())
+        {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $postData = $request->except('password');
+       // $postData = $request->except('password');
+
+        $postData['first_name'] = RijndaelEncryption::encrypt($request->first_name);
+        $postData['last_name']  = RijndaelEncryption::encrypt($request->last_name);
+        $postData['email']      = RijndaelEncryption::encrypt($request->email);
 
         // Filter out remove images if selected and configured in access modifiers
-        foreach (['profile_picture'] as $field) {
-            if (isset($postData['remove_' . $field]) && $postData['remove_' . $field] == '1') {
+        foreach (['profile_picture'] as $field)
+        {
+            if (isset($postData['remove_' . $field]) && $postData['remove_' . $field] == '1')
+            {
                 $postData[$field] = '';
 
                 // Delete file as well
@@ -71,14 +80,16 @@ class DashboardController extends BackendController
             }
         }
 
-        if ($request->hasFile('profile_picture')) {
+        if ($request->hasFile('profile_picture'))
+        {
             $imageName = $record->id . '-' . str_random(12) . '.' . $request->file('profile_picture')->getClientOriginalExtension();
             $path      = public_path(config('constants.front.dir.profilePicPath'));
             $request->file('profile_picture')->move($path, $imageName);
             $postData['profile_picture'] = $imageName;
         }
 
-        if ($request->has('password') && $request->get('password', '') != '') {
+        if ($request->has('password') && $request->get('password', '') != '')
+        {
             $postData['password'] = bcrypt($request->get('password'));
         }
 

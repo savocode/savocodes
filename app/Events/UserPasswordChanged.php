@@ -10,17 +10,17 @@ class UserPasswordChanged
     use SerializesModels;
 
     public $user;
-    public $attributes;
+    public $password;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(User $user, $attributes=array())
+    public function __construct(User $user, $password)
     {
-        $this->user = $user;
-        $this->attributes = $attributes;
+        $this->user         = $user;
+        $this->password     = $password;
     }
 
 }

@@ -32,17 +32,24 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\Api\JWTUserLogout' => [
             // 'App\Listeners\Api\SendHiddenPushNotification',
         ],
-        'App\Events\UserDeleted' => [
+        'App\Events\Backend\UserDeleted' => [
             // 'App\Listeners\Api\SendHiddenPushNotification',
             // 'App\Listeners\DeleteUserData',
         ],
-        'App\Events\UserDeactivated' => [
-            // 'App\Listeners\Api\SendHiddenPushNotification',
+        'App\Events\Backend\UserDeactivated' => [
+             'App\Listeners\SendDeActivationEmail',
         ],
-        'App\Events\UserActivated' => [
+        'App\Events\Backend\UserActivated' => [
+            'App\Listeners\SendActivationEmail'
         ],
         'App\Events\SavingReferral' => [
             'App\Listeners\AddReferralStatusHistory',
+        ],
+        'App\Events\UserPasswordChanged' => [
+            'App\Listeners\SendPasswordChangedEmail',
+        ],
+        'App\Events\EmployeeUpdate' => [
+            'App\Listeners\SendEmployeeUpdateEmail',
         ],
     ];
 

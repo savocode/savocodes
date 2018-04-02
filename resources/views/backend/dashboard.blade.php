@@ -69,29 +69,11 @@
                     <div class="row">
                         <a class="dashboard_link" href="javascript:void(0);">
                             <div class="col-xs-3">
-                                <i class="fa fa-cab fa-5x"></i>
+                                <i class="fa fa-medkit fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-right">
-                                <div>Total Drivers</div>
-                                <div class="huge">{{ $stats->total_drivers }}</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6">
-            <div class="panel panel-red">
-                <div class="panel-heading">
-                    <div class="row">
-                        <a class="dashboard_link" href="javascript:void(0);">
-                            <div class="col-xs-3">
-                                <i class="fa fa-user fa-5x"></i>
-                            </div>
-                            <div class="col-xs-9 text-right">
-                                <div>Total Passengers</div>
-                                <div class="huge">{{ $stats->total_passengers }}</div>
+                                <div>Total Hospital</div>
+                                <div class="huge">{{ $stats->total_hospital }}</div>
                             </div>
                         </a>
                     </div>
@@ -110,6 +92,42 @@
                             <div class="col-xs-9 text-right">
                                 <div>Total Verified Users</div>
                                 <div class="huge">{{ $stats->total_verified_users }}</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="panel panel-red">
+                <div class="panel-heading">
+                    <div class="row">
+                        <a class="dashboard_link" href="javascript:void(0);">
+                            <div class="col-xs-3">
+                                <i class="fa fa-user-md fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div>Total Physician</div>
+                                <div class="huge">{{ $stats->total_physician }}</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="panel panel-red">
+                <div class="panel-heading">
+                    <div class="row">
+                        <a class="dashboard_link" href="javascript:void(0);">
+                            <div class="col-xs-3">
+                                <i class="fa fa-user-md fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div>Total Physician</div>
+                                <div class="huge">{{ $stats->total_physician }}</div>
                             </div>
                         </a>
                     </div>

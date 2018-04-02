@@ -48,6 +48,12 @@ class Referral extends Model
         return $this->hospital->title;
     }
 
+    public function getReferralReasonAttribute()
+    {
+        //return $this->statusHistory()->whereReferralId($this->attributes['id'])->get()->pluck('reason');//->reason;
+        return $this->attributes['status'] > 0 ? $this->statusHistory()->get()->pluck('reason') : [];
+    }
+
     /*
      * @Relationships
      */

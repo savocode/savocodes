@@ -6,32 +6,7 @@
 @endsection
 
 @section('JSLibraries')
-    {{--<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>--}}
 
-{{--<script type="text/javascript">--}}
-    {{--var config = {--}}
-      {{--apiKey: "AIzaSyBfQBYgCO9PFhq7baJfospBSLYwtoq3e74",--}}
-      {{--databaseURL: "{{ env('FIREBASE_DATABASE_URL') }}"--}}
-    {{--};--}}
-    {{--firebase.initializeApp(config);--}}
-
-    {{--firebase.database().ref('/users/{{ $record->prefix_uid }}').on('value', function(snapshot) {--}}
-      {{--var userObject = snapshot.val()--}}
-
-      {{--$('#message-sent').text( userObject.hasOwnProperty('messages_sent') ? userObject['messages_sent'] : 0 )--}}
-      {{--$('#message-received').text( userObject.hasOwnProperty('messages_received') ? userObject['messages_received'] : 0 )--}}
-    {{--});--}}
-
-    {{--var userRef = firebase.database().ref('/users').on('child_changed', function(snapshot, key) {--}}
-      {{--if ( snapshot.key === '{{ $record->prefix_uid }}' ) {--}}
-        {{--var userObject = snapshot.val()--}}
-
-        {{--$('#message-sent').text( userObject.hasOwnProperty('messages_sent') ? userObject['messages_sent'] : 0 )--}}
-        {{--$('#message-received').text( userObject.hasOwnProperty('messages_received') ? userObject['messages_received'] : 0 )--}}
-        {{--$('#credits').text( userObject.hasOwnProperty('credits') ? userObject['credits'] : 0 )--}}
-      {{--}--}}
-    {{--});--}}
-{{--</script>--}}
 @endsection
 
 @section('content')
@@ -39,7 +14,7 @@
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>{{ $moduleProperties['longModuleName'] }}
+      <h1>{{ $hospital->title. " Employee Detail" }}
       </h1>
     </section>
 

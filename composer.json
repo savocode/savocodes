@@ -18,7 +18,8 @@
         "ramsey/uuid": "^3.7",
         "rap2hpoutre/laravel-log-viewer": "^0.10.3",
         "tymon/jwt-auth": "0.5.*",
-        "yajra/laravel-datatables-oracle": "^7.5"
+        "yajra/laravel-datatables-oracle": "^7.5",
+        "intervention/image": "dev-master"
     },
     "autoload": {
         "classmap": [

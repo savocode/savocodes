@@ -28,8 +28,8 @@ class UserUpdateRequest extends Request {
     public function messages()
     {
         return [
-            'email.unique'    => 'Email already found in our system, please try another one.',
-            'phone.phone'    => 'Please enter your valid phone number in international format.',
+            'email.unique'      => 'Email already found in our system, please try another one.',
+            'phone.phone'       => 'Please enter your valid phone number in international format.',
             'old_pwd.different' => 'The old password and new password must be different.',
         ];
     }

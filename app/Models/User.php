@@ -35,11 +35,11 @@ class User extends Authenticatable
 {
     use SoftDeletes, Notifiable, Metable;
 
-    const ROLE_ADMIN              = 1;
-    const ROLE_HOSPITAL_EMPLOYEES = 2;
-    const ROLE_PHYSICIANS         = 3;
+    const ROLE_ADMIN                = 1;
+    const ROLE_HOSPITAL_EMPLOYEES   = 2;
+    const ROLE_PHYSICIANS           = 3;
 
-    const ADMIN_USER_ID       = 1;
+    const ADMIN_USER_ID             = 1;
 
     const BACKEND_ALLOW_ROLES = [
         self::ROLE_ADMIN,
@@ -54,7 +54,7 @@ class User extends Authenticatable
      * Fields that will be saved encrypted in database
      */
     protected static $encryptedFields = [
-        'first_name', 'last_name', 'email', 'phone', 'password'
+        'first_name', 'last_name', 'email', 'phone'
     ];
 
     /**
@@ -63,7 +63,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'email', 'password', 'hospital_id', 'profession_id', 'role_id', 'first_name', 'last_name', 'phone', 'address', 'city', 'state', 'country', 'profile_picture',
+        'email_verification', 'email', 'password', 'hospital_id', 'profession_id', 'role_id', 'first_name', 'last_name', 'phone', 'address', 'city', 'state', 'country', 'profile_picture',
     ];
 
     /**
@@ -216,16 +216,12 @@ class User extends Authenticatable
     {
         $this->is_active = 1;
         $this->save();
-
-        event(new UserActivated($this));
     }
 
     public function deactivate()
     {
         $this->is_active = 0;
         $this->save();
-
-        event(new UserDeactivated($this));
     }
 
     public function followUser($user)
@@ -481,6 +477,9 @@ class User extends Authenticatable
             case self::ROLE_ADMIN:
                 return 'admin';
                 break;
+            case self::ROLE_HOSPITAL_EMPLOYEES:
+                return 'employee';
+                break;
             default:
                 throw new \App\Exceptions\InvalidUserTypeException("Invalid user role detected", 1);
                 break;
@@ -514,6 +513,27 @@ class User extends Authenticatable
             '<span class="label label-danger">Inactive</span>';
     }
 
+    //Start
+    public function getFirstNameDecryptedAttribute()
+    {
+        return RijndaelEncryption::decrypt($this->attributes['first_name']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
+    }
+
+    public function getLastNameDecryptedAttribute()
+    {
+        return RijndaelEncryption::decrypt($this->attributes['last_name']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
+    }
+
+    public function getEmailDecryptedAttribute()
+    {
+        return RijndaelEncryption::decrypt($this->attributes['email']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
+    }
+
+    public function getPhoneDecryptedAttribute()
+    {
+        return RijndaelEncryption::decrypt($this->attributes['phone']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
+    }
+    //Ends
     /**
      * All Mutators will goes here
      */
@@ -531,6 +551,8 @@ class User extends Authenticatable
     {
         return $this->attributes['hospital_id'] > 0 ? $this->hospital->title : '';
     }
+
+
 
     /**
      * Accessor to fetch title attribute via profession relation property

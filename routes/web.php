@@ -38,74 +38,90 @@ Route::prefix('backend')->namespace('Backend')->group(function () {
     Route::get('/cities/{stateID}', 'DashboardController@getCities');
 
     // Password Reset Routes...
-    Route::get('reset-password', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('backend.password.request');
-    Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('backend.password.email');
-    Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('backend.password.reset');
-    Route::post('reset-password', 'Auth\ResetPasswordController@reset')->name('backend.password.final');
+    Route::get('reset-password',        'Auth\ForgotPasswordController@showLinkRequestForm')->name('backend.password.request');
+    Route::post('password/email',       'Auth\ForgotPasswordController@sendResetLinkEmail')->name('backend.password.email');
+    Route::get('password/reset/{token}','Auth\ResetPasswordController@showResetForm')->name('backend.password.reset');
+    Route::post('reset-password',       'Auth\ResetPasswordController@reset')->name('backend.password.final');
 
     Route::group(['middleware' => 'backend.auth'], function () {
         Route::get('/dashboard', 'DashboardController@getIndex')->name('backend.dashboard');
-        Route::match(['GET', 'POST'], '/system/edit-profile', 'DashboardController@editProfile')->name('backend.profile.setting');
+        Route::match(['GET', 'POST'],   '/system/edit-profile', 'DashboardController@editProfile')->name('backend.profile.setting');
 
         Route::group(['middleware' => 'backend.admin'], function () {
-            Route::get('/users/verification', 'UserController@verificationListPending');
-            Route::get('/users/data', 'UserController@data');
-            Route::get('/users/detail/{record}', 'UserController@detail');
-            Route::get('/users/purchases/{record}', 'UserController@purchases');
-            Route::get('/users/block/{record}', 'UserController@block');
-            Route::get('/users/unblock/{record}', 'UserController@unblock');
-            Route::get('/users/verified/{record}', 'UserController@verify');
-            Route::get('/users/unverified/{record}', 'UserController@unverify');
-            Route::post('/users/{record}', 'UserController@handleVerification');
-            Route::get('/users/{index?}', 'UserController@index');
-            Route::delete('/users/{record}', 'UserController@destroy');
+            Route::get('/users/verification',           'UserController@verificationListPending');
+            Route::get('/users/data',                   'UserController@data');
+            Route::get('/users/detail/{record}',        'UserController@detail');
+            Route::get('/users/block/{record}',         'UserController@block');
+            Route::get('/users/unblock/{record}',       'UserController@unblock');
+            Route::get('/users/verified/{record}',      'UserController@verify');
+            Route::get('/users/unverified/{record}',    'UserController@unverify');
+            Route::post('/users/{record}',              'UserController@handleVerification');
+            Route::get('/users/{index?}',               'UserController@index');
+            Route::delete('/users/{record}',            'UserController@destroy');
 
-            Route::get('/users/create/driver', 'DriverController@createDriver');
-            Route::post('/users/create/driver', 'DriverController@storeDriver');
-            Route::get('/users/edit/driver/{record}', 'DriverController@editDriver');
-            Route::post('/users/edit/driver/{record}', 'DriverController@updateDriver');
+//            Route::get('/users/create/driver', 'DriverController@createDriver');
+//            Route::post('/users/create/driver', 'DriverController@storeDriver');
+//            Route::get('/users/edit/driver/{record}', 'DriverController@editDriver');
+//            Route::post('/users/edit/driver/{record}', 'DriverController@updateDriver');
+//
+//            Route::get('/users/create/passenger', 'PassengerController@createPassenger');
+//            Route::post('/users/create/passenger', 'PassengerController@storePassenger');
+//            Route::get('/users/edit/passenger/{record}', 'PassengerController@editPassenger');
+//            Route::post('/users/edit/passenger/{record}', 'PassengerController@updatePassenger');
+//
+//            Route::get('/reviews/data', 'ReviewController@data');
+//            Route::get('/reviews/{index?}', 'ReviewController@index');
+//            Route::delete('/reviews/{record}', 'ReviewController@destroy');
+//            Route::get('/reviews/approve/{record}', 'ReviewController@approve');
+//            Route::get('/reviews/disapprove/{record}', 'ReviewController@disapprove');
+//
+//            Route::get('/user-stats/data', 'StatsController@data');
+//            Route::get('/user-stats/detail/{record}', 'StatsController@userStats');
+//            Route::get('/user-stats/{index?}', 'StatsController@paymentTransaction');
+//
+//            Route::get('/promo-codes/create', 'PromoCodeController@create');
+//            Route::post('/promo-codes', 'PromoCodeController@save');
+//            Route::delete('/promo-codes/{record}', 'PromoCodeController@delete');
+//            Route::get('/promo-codes/data', 'PromoCodeController@data');
+//            Route::get('/promo-codes/edit/{record}', 'PromoCodeController@edit');
+//            Route::post('/promo-codes/{record}', 'PromoCodeController@update');
+//            Route::get('/promo-codes/{index?}', 'PromoCodeController@index')->name('promo-codes.index');
+//
+//            Route::get('/schools/create', 'SchoolController@create');
+//            Route::post('/schools', 'SchoolController@save');
+//            Route::delete('/schools/{record}', 'SchoolController@delete');
+//            Route::get('/schools/edit/{record}', 'SchoolController@edit');
+//            Route::post('/schools/{record}', 'SchoolController@update');
+//            Route::get('/schools/{index?}', 'SchoolController@index')->name('schools.index');
+          //  Route::get('/hospitals/verification',           'HospitalController@verificationListPending');
 
-            Route::get('/users/create/passenger', 'PassengerController@createPassenger');
-            Route::post('/users/create/passenger', 'PassengerController@storePassenger');
-            Route::get('/users/edit/passenger/{record}', 'PassengerController@editPassenger');
-            Route::post('/users/edit/passenger/{record}', 'PassengerController@updatePassenger');
+            Route::get('/hospitals/data',                   'HospitalController@data');
+            Route::get('/hospitals/detail/{record}',        'HospitalController@detail');
+            Route::get('/hospitals/block/{record}',         'HospitalController@block');
+            Route::get('/hospitals/unblock/{record}',       'HospitalController@unblock');
+            Route::get('/hospitals/{index?}',               'HospitalController@index');
+            Route::get('/hospital/create',                  'HospitalController@showCreateForm');
+            Route::post('/hospital/create',                 'HospitalController@create');
 
-            Route::get('/reviews/data', 'ReviewController@data');
-            Route::get('/reviews/{index?}', 'ReviewController@index');
-            Route::delete('/reviews/{record}', 'ReviewController@destroy');
-            Route::get('/reviews/approve/{record}', 'ReviewController@approve');
-            Route::get('/reviews/disapprove/{record}', 'ReviewController@disapprove');
+            Route::get('/hospital/edit/{record}',           'HospitalController@showEditForm');
+            Route::put('/hospital/edit/{record}',           'HospitalController@update');
+            Route::delete('/hospitals/{record}',            'HospitalController@destroy');
 
-            Route::get('/user-stats/data', 'StatsController@data');
-            Route::get('/user-stats/detail/{record}', 'StatsController@userStats');
-            Route::get('/user-stats/{index?}', 'StatsController@paymentTransaction');
+            //Hospital Employees
+            Route::get('/hospitals/{record}/employees',                     'HospitalController@employees');
+            Route::get('/hospitals/{record}/employees/data',                'HospitalController@employeesData');
+            Route::get('/hospitals/{record}/employee/create',               'HospitalController@showEmployeeCreateForm');
+            Route::post('/hospitals/{record}/employee/create',              'HospitalController@createEmployee');
+            Route::get('/hospitals/{hospital}/employee/edit/{employee}',    'HospitalController@showEmployeeEditForm');
+            Route::put('/hospitals/{hospital}/employee/edit/{employee}',    'HospitalController@editEmployee');
+            Route::get('/hospitals/{hospital}/employee/detail/{record}',    'HospitalController@detailEmployee');
 
-            Route::get('/promo-codes/create', 'PromoCodeController@create');
-            Route::post('/promo-codes', 'PromoCodeController@save');
-            Route::delete('/promo-codes/{record}', 'PromoCodeController@delete');
-            Route::get('/promo-codes/data', 'PromoCodeController@data');
-            Route::get('/promo-codes/edit/{record}', 'PromoCodeController@edit');
-            Route::post('/promo-codes/{record}', 'PromoCodeController@update');
-            Route::get('/promo-codes/{index?}', 'PromoCodeController@index')->name('promo-codes.index');
-
-            Route::get('/schools/create', 'SchoolController@create');
-            Route::post('/schools', 'SchoolController@save');
-            Route::delete('/schools/{record}', 'SchoolController@delete');
-            Route::get('/schools/edit/{record}', 'SchoolController@edit');
-            Route::post('/schools/{record}', 'SchoolController@update');
-            Route::get('/schools/{index?}', 'SchoolController@index')->name('schools.index');
+            Route::get('/employee/block/{record}',          'HospitalController@blockEmployee');
+            Route::get('/employee/unblock/{record}',        'HospitalController@unblockEmployee');
+            Route::delete('/employee/{record}',             'HospitalController@destroyEmployee');
 
             Route::match(['GET', 'POST'], '/reports', 'ReportsController@index');
             Route::match(['GET', 'POST'], '/system/edit-settings', 'DashboardController@editSettings')->name('backend.settings');
-
-            Route::group(['prefix' => 'trips'], function() {
-                Route::get('payments', 'TripController@payments')->name('backend.payments');
-                Route::get('payments/data', 'TripController@paymentsData')->name('backend.payments.data');
-                Route::get('payments/detail/{record}', 'TripController@paymentDetail')->name('backend.payments.detail');
-
-                Route::get('canceled', 'TripController@canceledTrips')->name('backend.trips.canceled');
-                Route::get('canceled/data', 'TripController@canceledTripsData')->name('backend.trips.canceled.data');
-            });
 
             Route::group(['prefix' => 'reports'], function() {
                 Route::get('dashboard', 'ReportsController@dashboard')->name('backend.reports.dashboard');

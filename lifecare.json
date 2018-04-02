@@ -11,8 +11,8 @@
       "name": "LNTechnologies"
     }
   },
-  "host": "192.168.168.114",
-  "basePath": "/lifecare/public/api/v1",
+  "host": "192.168.168.105",
+  "basePath": "/Projects/lifecare/public/api/v1",
   "tags": [
     {
       "name": "User",
