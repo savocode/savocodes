@@ -77,7 +77,7 @@
                 <dd>{!! $record->active_text_formatted !!} </dd>
 
                 <dt>Description</dt>
-                <dd>{{ $record->description }}</dd>
+                <dd>“ {{ $record->description }} ”</dd>
 
                 <dt>Registration Date</dt>
                 <dd>{{ $record->created_at->format(constants('back.theme.modules.datetime_format')) }}</dd>
