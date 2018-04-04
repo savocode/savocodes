@@ -17,10 +17,12 @@ class Notification extends Model
      */
     protected $fillable = [
         'user_type',
+        'user_id',
         'notification',
         'notification_type',
         'notification_data',
         'payload',
+        'is_read',
     ];
 
     /**
@@ -34,6 +36,15 @@ class Notification extends Model
         'is_read' => 'boolean',
     ];
 
+    public function setUpdatedAt($value)
+    {
+        return $this;
+    }
+
+    public function getUpdatedAtColumn()
+    {
+        return null;
+    }
     /**
      * Identify the user_type for notifications
      *

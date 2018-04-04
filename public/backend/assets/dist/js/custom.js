@@ -21,6 +21,7 @@ var appConfig = (function(){
             var yajraDataTable = $('.yajrabox').DataTable({
                 order: appConfig.get( 'dt.order', [[ 1, 'asc']] ),
                 searching: appConfig.get( 'dt.searching', true ),
+                select: appConfig.get( 'dt.select', false ),
                 serverSide: true,
                 processing: true,
                 ajax: {

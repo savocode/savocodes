@@ -46,7 +46,7 @@
                 <h3 class="box-title">Create Mode</h3>
               </div>
               <div class="box-body">
-                  {!! Form::open(['url' => 'backend/'.str_singular($moduleProperties['controller']).'/create', 'files' => 'true']) !!}
+                  {!! Form::open(['url' => 'backend/'.$moduleProperties['controller'].'/create', 'files' => 'true']) !!}
                     @include( 'backend/' . $moduleProperties['viewDir'] . '.form' )
                   {!! Form::close() !!}
               </div>

@@ -61,6 +61,7 @@ function public_url($uri='/')
 function backend_sidebar_generator($constantMenu, $condition=array())
 {
     $currentRequest = Illuminate\Support\Facades\Request::getPathInfo();
+
     $currentRequest = substr($currentRequest, 0, 8) == '/backend' ? substr($currentRequest, 8) : $currentRequest;
 
     $li = [];
@@ -81,7 +82,6 @@ function backend_sidebar_generator($constantMenu, $condition=array())
 
         $hrefUrl  = substr($menu['path'], 0, 1) == '/' ? backend_url( $menu['path'] ) : $menu['path'];
         $isActive = ($menu['path'] == $currentRequest);
-
         if ( isset($menu['regexPath']) && $menu['regexPath'] ) {
             $isActive = preg_match($menu['regexPath'], $currentRequest) === 1;
         }

@@ -7,6 +7,8 @@ use App\Events\Api\JWTUserLogin;
 use App\Events\Api\JWTUserLogout;
 use App\Events\Api\JWTUserRegistration;
 use App\Events\Api\JWTUserUpdate;
+use Gregwar\Image\Image;
+
 //use App\Events\Api\NotificationsListed;
 use App\Events\UserPasswordChanged;
 use App\Helpers\RESTAPIHelper;
@@ -521,7 +523,7 @@ class WebserviceController extends ApiBaseController {
             'diagnosis',
             'referral_reason',
             'status',
-            'status_text',
+            'status_text_api',
             'hospital_title',
         ]) );
     }
@@ -572,57 +574,6 @@ Comments: %s
 
     public function criteria(Request $request)
     {
-//        $criteria = [
-//            [
-//                'title'         => 'Long Term Acute Care Hospital',
-//                'sub_criteria'  => [
-//                    [
-//                        'name' => 'Respiratory Failure',
-//                        'body' => '<h3>Respiratory Failure</h3><ul><li>Active daily physician assessment/intervention.</li>    <li>Aggressive pulmonary hygiene.</li>    <li>Nebulizer treatments at least Q6 and PRN.</li>    <li>Chest tube management.</li>    <li>Supplemental FiO2 to maintain SaO2 >90%.</li>    <li>Invasive vent support with weaning potential.</li>    <li>Non-invasive support with BiPAP /CPAP continuously or intermittently.</li>    <li>Respiratory therapist available 24/7.</li>    <li>Trach care and management.</li>    <li>Continuous O2 Monitoring.</li>    <li>Pulmonology Consult with active management.</li>    <li>24 hour RN care.</li>    <li>Antibiotic coverage.</li>    <li>Chest physiotherapy.</li>    <li>Frequent lab and/or radiology studies.</li>    <li>Patient/Family training for home care.</li>    <li>PT/OT for oxygen conservation training and strengthening.</li>    <li>Speech training for evaluation and treatment of swallowing disorders.</li></ul>'
-//                    ],
-//                    [
-//                        'name' => 'Renal Failure',
-//                        'body' => '<h3>Renal Failure</h3><ul><li>Active daily physician assessment/intervention.</li>    <li>Nephrology coverage.</li>    <li>Acute renal failure requiring dialysis and monitoring for recovery.</li>    <li>Electrolyte monitoring and management.</li>    <li>Management of metabolic disturbances  with replacement when indicated.</li>    <li>Ultra-filtration to establish a target weight.</li>    <li>Diuresis for volume management.</li>    <li>Acute or Chronic dialysis (both PD and hemo).</li>    <li>Dietitian consult for training with dietary restrictions.</li>    <li>Frequent lab and/or radiology studies.</li></ul>'
-//                    ],
-//                    [
-//                        'name' => 'Major GI Disturbances',
-//                        'body' => '<h3>Major GI Disturbances</h3><ul><li>Bowel rest requiring TPN.</li>    <li>New fistula management.</li>    <li>High output fistula or ostomy requiring</li>    <li>Antibiotic coverage.</li>    <li>Patient/Family training for home care.</li>    <li>Dietitian consult for treatment plan and training.</li></ul>'
-//                    ],
-//                    [
-//                        'name' => 'Complex Wound Care',
-//                        'body' => '<h3>Complex Wound Care</h3><ul><li>Complex wound dehiscence requiring extensive wound care and monitoring at least Q12 hours by Certified Wound Care team and RN care.</li>    <li>Wounds with bone and/or tendon exposure.</li>    <li>Osteomyelitis with prolonged antibiotic coverage and wound care.</li>    <li>Large necrotic wounds requiring frequent debridement.</li>    <li>Drain and/or wound suction management system.</li>    <li>Multiple Stage III \u2013 IV wounds.</li>    <li>Guillotine-style amputations.</li>    <li>Dietitian consult for nutritional support to aid in healing.</li>    <li>PT/OT consult for strengthening and training.</li></ul>'
-//                    ],
-//                    [
-//                        'name' => 'Cardiovascular Conditions',
-//                        'body' => '<h3>Cardiovascular Conditions</h3><ul><li>Endocarditis requiring prolonged IV antibiotic therapy and acute care with cardiac monitoring.</li>    <li>Heart failure requiring daily adjustment of diuretic therapy, fluids and/or electrolyte replacement and/or LVAD* assistance.</li>    <li>Heart failure with pulmonary hypertension requiring long-term IV vasodilator therapy and continued oxygen support (greater than 40%).</li>    <li>New onset cardiac dysfunction requiring active monitoring and medication management.</li>    <li>Complications post heart transplant or post cardiac surgery.</li>    <li>Cardiac dysthymias that requiring monitoring with possible intervention and are at risk for requiring Rapid Response Team intervention.</li>    <li>Dietitian consult for training on dietary restrictions.</li>    <li>PT/OT for strengthening and training.</li></ul>'
-//                    ],
-//                    [
-//                        'name' => 'Trauma',
-//                        'body' => '<h3>Trauma</h3><ul><li>Active daily physician monitoring and intervention.</li>    <li>Acute care by certified TBI team with a focus on recovery*</li>    <li>Multiple fractures requiring monitoring and management to prevent additional trauma or send back to the STAC.</li>    <li>Consult for wound care by certified wound care clinicians.</li>    <li>PT and OT consult for strengthening and training.</li>    <li>Speech consult to add in communication recovery.</li>    <li>Dietitian consult for nutritional support to aid in healing.</li>    <li>Neurology consult for treatment plan and to follow.</li></ul>'
-//                    ]
-//                ]
-//            ],
-//            [
-//                'title'        => 'Home Health Care',
-//                'sub_criteria' =>[
-//                    [
-//                        'name' => 'Home Health Care Services Overview',
-//                        'body' => '<h4>What Home Care services are available from Beyond Faith?<h4><p>Our dedicated team of professionals are here to help with day-to-day activities and provide the following services:</p><ul><li>Skilled Nursing</li><li>Physical Therapy</li><li>Occupational Therapy</li><li>Speech Therapy</li><li>Enterostomal Therapy</li><li>Home Health Aide</li><li>Medical Social Services</li></ul><p>Coordination of :</p><ul><li>Medical Equipment</li><li>Oxygen</li><li>Infusion Medication</li><li>Pharmacy Medication</li><li>Community Resources</li><li>Hospice</li><li>Caregivers/Companions</li><li>Physician House Calls</li></ul><p>Our specializations:</p><ul><li>Wound Care</li><li>•	Enteral Feedings</li><li>Infusions & Injections</li><li>•	Disease Management</li><li>•	Ostomy Care</li><li>Catheter Care</li><li>Medication Management</li><li>Care Education</li><li>Pre-Operative Home Safety Assessments</li></ul>'
-//                    ],
-//                ]
-//            ],
-//            [
-//                'title'        => 'Other',
-//                'sub_criteria' =>[
-//                    [
-//                        'name' => 'Upon Assessment',
-//                        'body' => '<h3>Short Term Acute</h3>\n<p>Responsible for evaluating patient and establishing a diagnosis, providing appropriate interventions (diagnostic or surgical intervention), forming a treatment plan and initiating the plan. Move to lower level of care when patient is stable and patient is responding to treatment plan.  (Note: Attending physicians round daily.)</p>\n\n<h3>Long Term Acute Care</h3>\n<p>Responsible for continuing a plan of care on an acute care patient who is determined to require at least 20 days continued inpatient acute care with daily physician assessment and support.  These patients would move to lower level of care when patient is stable and care plan can be safely continued without daily rounding by physician.</p>\n\n<h3>Acute Rehab</h3>\n<p>Responsible for providing care with a rehab focus on medically stable patients.  The patient will need to be able to participate in at least 3 hours of therapy each day and be able to demonstrate progress to continue with the program.</p>\n\n<h3>Skilled Nursing Facility</h3>\n<p>Responsible for continuing a plan of care on a stable patient providing that the care plan can be carried out by licensed staff and seen by a physician or physician extender on average once per week (Medicare guidelines stipulate once a month).</p>\n\n<h3>Home Health</h3>\n<p>Responsible for continuing a plan of care on a home bound stable patient providing that the care plan can be carried out by licensed staff or non-licensed staff and is seen by a physician on average once every 2-3 months.</p>'
-//                    ],
-//                ]
-//            ]
-//
-//        ];
-
         return RESTAPIHelper::response(Setting::extract('cms.criteria'), true);
     }
 

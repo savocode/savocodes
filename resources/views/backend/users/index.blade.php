@@ -20,23 +20,22 @@
   $(function(){
     appConfig.set('yajrabox.ajax', base_url + '/users/data');
     appConfig.set('dt.searching', false);
+    appConfig.set('dt.order', [5, 'desc']);
     appConfig.set('yajrabox.ajax.data', function(data) {
       data.state       = jQuery('select[name=state]').val();
       data.city        = jQuery('select[name=city]').val();
       data.gender      = jQuery('select[name=gender]').val();
-   //   data.age         = jQuery('select[name=age]').val();
       data.profession  = jQuery('select[name=profession]').val();
-     // data.school_name = jQuery('select[name=school_name]').val();
     });
     appConfig.set('yajrabox.columns', [
-        {data: 'profile_picture', orderable: false, searchable: false},
-        {data: 'first_name'},
-        {data: 'last_name'},
-        {data: 'email'},
-        {data: 'profession_id'},
-        {data: 'created_at'},
-        {data: 'active'},
-        {data: 'action', orderable: false, searchable: false}
+        {data: 'profile_picture',   orderable: false, searchable: false},
+        {data: 'first_name',        orderable: false, searchable: false},
+        {data: 'last_name',         orderable: false, searchable: false},
+        {data: 'email',             orderable: false, searchable: false},
+        {data: 'profession_id',     orderable: false, searchable: false},
+        {data: 'created_at',        orderable: true,  searchable: false},
+        {data: 'active',            orderable: false, searchable: false},
+        {data: 'action',            orderable: false, searchable: false}
     ]);
   })
 </script>

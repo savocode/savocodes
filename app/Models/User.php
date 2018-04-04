@@ -184,6 +184,11 @@ class User extends Authenticatable
         return (bool) ($this->attributes['role_id'] == self::ROLE_ADMIN);
     }
 
+    public function isEmployee()
+    {
+        return (bool) ($this->attributes['role_id'] == self::ROLE_HOSPITAL_EMPLOYEES);
+    }
+
     public function isSelf($user)
     {
         return (bool) ($this->attributes['id'] == self::extractUserId($user));
@@ -224,79 +229,79 @@ class User extends Authenticatable
         $this->save();
     }
 
-    public function followUser($user)
-    {
-        try {
-            $this->following()->attach($user);
-
-            event(new NewFollowingEvent($this, $user));
-
-            return true;
-
-        } catch (\Illuminate\Database\QueryException $e) {
-            // It is "Integrity constraint violation"
-            if ( $e->getCode() == "23000" ) {
-                return true;
-            }
-
-            return false;
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    public function unfollowUser($user)
-    {
-        try {
-            $this->following()->detach($user);
-
-            event(new NewUnfollowingEvent($this, $user));
-
-            return true;
-
-        } catch (\Illuminate\Database\QueryException $e) {
-            // It is "Integrity constraint violation"
-            if ( $e->getCode() == "23000" ) {
-                return true;
-            }
-
-            return false;
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    public function doBlock($user)
-    {
-        try {
-            $this->blocked()->attach($user);
-
-            event(new BlockEvent($this, $user));
-
-            return true;
-
-        } catch (\Illuminate\Database\QueryException $e) {
-            return true;
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    public function doUnblock($user)
-    {
-        try {
-            $this->blocked()->detach($user);
-
-            event(new UnblockEvent($this, $user));
-
-            return true;
-
-        } catch (\Illuminate\Database\QueryException $e) {
-            return true;
-        } catch (Exception $e) {
-            return false;
-        }
-    }
+//    public function followUser($user)
+//    {
+//        try {
+//            $this->following()->attach($user);
+//
+//            event(new NewFollowingEvent($this, $user));
+//
+//            return true;
+//
+//        } catch (\Illuminate\Database\QueryException $e) {
+//            // It is "Integrity constraint violation"
+//            if ( $e->getCode() == "23000" ) {
+//                return true;
+//            }
+//
+//            return false;
+//        } catch (Exception $e) {
+//            return false;
+//        }
+//    }
+//
+//    public function unfollowUser($user)
+//    {
+//        try {
+//            $this->following()->detach($user);
+//
+//            event(new NewUnfollowingEvent($this, $user));
+//
+//            return true;
+//
+//        } catch (\Illuminate\Database\QueryException $e) {
+//            // It is "Integrity constraint violation"
+//            if ( $e->getCode() == "23000" ) {
+//                return true;
+//            }
+//
+//            return false;
+//        } catch (Exception $e) {
+//            return false;
+//        }
+//    }
+//
+//    public function doBlock($user)
+//    {
+//        try {
+//            $this->blocked()->attach($user);
+//
+//            event(new BlockEvent($this, $user));
+//
+//            return true;
+//
+//        } catch (\Illuminate\Database\QueryException $e) {
+//            return true;
+//        } catch (Exception $e) {
+//            return false;
+//        }
+//    }
+//
+//    public function doUnblock($user)
+//    {
+//        try {
+//            $this->blocked()->detach($user);
+//
+//            event(new UnblockEvent($this, $user));
+//
+//            return true;
+//
+//        } catch (\Illuminate\Database\QueryException $e) {
+//            return true;
+//        } catch (Exception $e) {
+//            return false;
+//        }
+//    }
 
     public function addDevice($deviceToken, $deviceType, $authToken)
     {
@@ -367,15 +372,6 @@ class User extends Authenticatable
         ]);
     }
 
-    public function canJoinRide()
-    {
-        // Does user has active card?
-        if (!$this->creditCard) {
-            throw new \App\Exceptions\UserCanNotJoinRide('User does not have active credit card.', 'invalid_credit_card');
-        }
-
-        return true;
-    }
 
     public function createNotification($userType, $text, array $notification_data=[])
     {
@@ -461,6 +457,9 @@ class User extends Authenticatable
                 break;
             case self::ROLE_ADMIN:
                 return 'admin';
+                break;
+            case self::ROLE_HOSPITAL_EMPLOYEES:
+                return 'employee';
                 break;
             default:
                 throw new \App\Exceptions\InvalidUserTypeException("Invalid user role detected", 1);
@@ -632,7 +631,7 @@ class User extends Authenticatable
 
     public function scopeUsers($query)
     {
-        return $query->whereNotIn('role_id', [self::ROLE_ADMIN]);
+        return $query->whereNotIn('role_id', self::BACKEND_ALLOW_ROLES);
     }
 
     public function scopeExcludeSelf($query)

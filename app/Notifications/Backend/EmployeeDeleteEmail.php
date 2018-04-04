@@ -8,24 +8,19 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class EmployeePassword extends Notification
+class EmployeeDeleteEmail extends Notification
 {
     use Queueable;
 
+    public $user;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public $user ;
-    public $password;
-    public $hospital;
-
-    public function __construct($user, $password, $hospital)
+    public function __construct($user)
     {
-        $this->user         = $user;
-        $this->password     = $password;
-        $this->hospital     = $hospital;
+        $this->user = $user;
     }
 
     /**
@@ -48,14 +43,9 @@ class EmployeePassword extends Notification
     public function toMail($notifiable)
     {
         $mailMessage = (new MailMessage)
-            ->subject( Email::makeSubject('Account Credentials') )
+            ->subject( Email::makeSubject('User Deleted') )
             ->greeting($this->user->full_name_decrypted)
-            ->line('Congratulations! Your account as the admin of the hospital '.$this->hospital->title.' has been created below are your credentials')
-            ->line("Email: ".$this->user->email_decrypted)
-            ->line("Password: ".$this->password)
-            ->line("Click on the button to go to admin panel")
-            ->action(constants('global.site.name').' Employee Panel', url('backend/login') )
-            ->line("Please login and check every things works fine");
+            ->line('Your account has been deleted by the '.constants('global.site.name'). ' admin');
 
         return $mailMessage;
     }

@@ -5,7 +5,7 @@
                             <i class="fa fa-info-circle"></i>
                         </a>
 
-                        <a href="{{ backend_url(str_singular($moduleProperties['controller']).'/edit/'.$record->id) }}" title="Edit" class="btn btn-xs btn-primary">
+                        <a href="{{ backend_url($moduleProperties['controller'].'/edit/'.$record->id) }}" title="Edit" class="btn btn-xs btn-primary">
                             <i class="fa fa-pencil"></i>
                         </a>
 

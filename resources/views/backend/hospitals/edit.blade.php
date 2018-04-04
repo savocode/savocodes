@@ -50,7 +50,7 @@
                 <h3 class="box-title">Edit Mode</h3>
               </div>
               <div class="box-body">
-                  {!! Form::model($record, ['method' => 'PUT', 'url' => 'backend/'.str_singular($moduleProperties['controller']).'/edit/'.$record->id, 'files' => 'true']) !!}
+                  {!! Form::model($record, ['method' => 'PUT', 'url' => 'backend/'.$moduleProperties['controller'].'/edit/'.$record->id, 'files' => 'true']) !!}
                   {!! Form::hidden('id', $record->id) !!}
                     @include( 'backend/' . $moduleProperties['viewDir'] . '.form' )
                   {!! Form::close() !!}

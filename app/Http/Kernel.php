@@ -51,16 +51,17 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'jwt-auth' => \App\Http\Middleware\Api\JWTAuthentication::class,
-        'backend.auth' => \App\Http\Middleware\Backend\Authenticate::class,
-        'backend.admin' => \App\Http\Middleware\Backend\Admin::class,
+        'auth'              => \Illuminate\Auth\Middleware\Authenticate::class,
+        'auth.basic'        => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings'          => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'can'               => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest'             => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle'          => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'jwt-auth'          => \App\Http\Middleware\Api\JWTAuthentication::class,
+        'backend.auth'      => \App\Http\Middleware\Backend\Authenticate::class,
+        'backend.admin'     => \App\Http\Middleware\Backend\Admin::class,
+        'backend.employee'  => \App\Http\Middleware\Backend\Employee::class,
         'jwt.base.throttle' => \App\Http\Middleware\Api\ThrottleJWTRequests::class,
-        'jwt.throttle' => \App\Http\Middleware\Api\JWTThrottle::class,
+        'jwt.throttle'      => \App\Http\Middleware\Api\JWTThrottle::class,
     ];
 }

@@ -51,6 +51,10 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\EmployeeUpdate' => [
             'App\Listeners\SendEmployeeUpdateEmail',
         ],
+        'App\Events\ReferralStatusChange' => [
+            'App\Listeners\ReferralStatusPush',
+            'App\Listeners\ReferralNotificationStore',
+        ],
     ];
 
     /**

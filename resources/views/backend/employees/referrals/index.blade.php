@@ -18,23 +18,27 @@
 
 <script type="text/javascript">
   $(function(){
-    appConfig.set('yajrabox.ajax', base_url + '/hospitals/{{ $record->id }}/employees/data');
+    appConfig.set('yajrabox.ajax', base_url + '/referrals/data');
     appConfig.set('dt.searching', false);
-    appConfig.set('dt.order', [4, 'desc']);
     appConfig.set('yajrabox.ajax.data', function(data) {
-      data.state       = jQuery('select[name=state]').val();
-      data.city        = jQuery('select[name=city]').val();
-      data.gender      = jQuery('select[name=gender]').val();
+      data.diagnosis       = jQuery('#diagnosis option:selected').val();
+      data.age             = jQuery('#age option:selected').val();
+      data.status          = jQuery('#status option:selected').val();
     });
     appConfig.set('yajrabox.columns', [
-        {data: 'profile_picture',   orderable: false, searchable: false},
-        {data: 'first_name',        orderable: false, searchable: false},
-        {data: 'last_name',         orderable: false, searchable: false},
-        {data: 'email',             orderable: false, searchable: false},
-        {data: 'created_at',        orderable: true, searchable: false},
-        {data: 'active',            orderable: false, searchable: false},
-        {data: 'action',            orderable: false, searchable: false}
+        {data: 'referred_by', orderable: false, searchable: false},
+        {data: 'first_name'},
+        {data: 'last_name'},
+        {data: 'age'},
+        {data: 'diagnosis'},
+        {data: 'created_at'},
+        {data: 'status'},
+        {data: 'action', orderable: false, searchable: false}
     ]);
+
+    // $('#diagnosis').on('change', function(){
+    //     console.log(jQuery('#diagnosis option:selected').text());
+    // });
   })
 </script>
 @endsection
@@ -44,10 +48,10 @@
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>{{ $record->title }}
-          <div class="pull-right">
-              <a href="{{ backend_url($moduleProperties['controller'].'/'.$record->id.'/employee/create') }}" type="button" class="btn btn-primary btn-flat">Add Employee</a>
-          </div>
+      <h1>{{ $hospital->title  }}
+      <div class="pull-right">
+        {{--<a href="{{ backend_url($moduleProperties['controller'].'/create/user') }}" type="button" class="btn btn-primary btn-flat">New Physician</a>--}}
+      </div>
       </h1>
     </section>
 
@@ -58,7 +62,7 @@
 
         <div class="box">
             <div class="box-header">
-              <h3 class="box-title">Employees List</h3>
+              <h3 class="box-title">All Hospital Physician</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
@@ -79,18 +83,18 @@
               <div class="grid-filter">
                   <form id="filter-form">
                       <div class="row">
-                        <div class="col-sm-4">
-                            <label>State</label>
-                            {!! Form::select('state', $states, null, ['class' => 'form-control chosen', 'id' => 'ddl_states']) !!}
-                        </div>
-                        <div class="col-sm-4">
-                            <label>City</label>
-                            {!! Form::select('city', $cities, null, ['class' => 'form-control chosen', 'id' => 'ddl_cities']) !!}
-                        </div>
                           <div class="col-sm-4">
-                              <label>Gender</label>
-                              {!! Form::select('gender', $genders, null, ['class' => 'form-control chosen']) !!}
+                              <label>Status</label>
+                              {!! Form::select('status', $status, null, ['class' => 'form-control chosen', 'id'=>'status']) !!}
                           </div>
+                        <div class="col-sm-4">
+                            <label>Diagnosis</label>
+                            {!! Form::select('diagnosis', $diagnosis, null, ['class' => 'form-control chosen', 'id'=>'diagnosis']) !!}
+                        </div>
+                        <div class="col-sm-4">
+                            <label>Age</label>
+                            {!! Form::select('age', $age, null, ['class' => 'form-control chosen', 'id'=>'age']) !!}
+                        </div>
                       </div>
                   </form>
               </div>
@@ -102,13 +106,14 @@
               <table class="table table-bordered table-striped yajrabox">
                 <thead>
                 <tr>
-                  <th width="80">Picture</th>
+                  <th width="80">Referred By</th>
                   <th>First Name</th>
                   <th>Last Name</th>
-                  <th>Email</th>
+                  <th>Age</th>
+                  <th>Diagnosis</th>
                   <th width="130">Date Registered</th>
                   <th width="50">Status</th>
-                  <th width="120">Action</th>
+                  <th width="70">Action</th>
                 </tr>
                 </thead>
               </table>
@@ -126,21 +131,5 @@
 @endsection
 
 @section('inlineJS')
-    <script type="text/javascript">
-        var url='{!! URL::to('/') !!}';
 
-        // Fetch cities
-        $('#ddl_states').on('change', function() {
-            $.getJSON(url + '/backend/cities/' + this.value, function(data) {
-                var options = $("#ddl_cities");
-                options.html('');
-                  options.append($('<option></option>').val('').html('Select City'));
-                $.each(data, function(key, val) {
-                    options.append($('<option></option>').val(key).html(val));
-                });
-
-                options.trigger('chosen:updated')
-            });
-        })
-    </script>
 @endsection

@@ -6,27 +6,7 @@
 @endsection
 
 @section('JSLibraries')
-{{--     <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
 
-<script type="text/javascript">
-    var config = {
-      apiKey: "AIzaSyBfQBYgCO9PFhq7baJfospBSLYwtoq3e74",
-      databaseURL: "{{ env('FIREBASE_DATABASE_URL') }}"
-    };
-    firebase.initializeApp(config);
-
-    firebase.database().ref('/system').on('value', function(snapshot) {
-      var userObject = snapshot.val()
-
-      $('#total_messages').text( userObject.hasOwnProperty('total_messages') ? userObject['total_messages'] : 0 )
-    });
-
-    var userRef = firebase.database().ref('/system').on('child_changed', function(snapshot, key) {
-        var userObject = snapshot.val()
-
-        $('#total_messages').text( userObject.hasOwnProperty('total_messages') ? userObject['total_messages'] : 0 )
-    });
-</script> --}}
 @endsection
 
 @section('content')
@@ -49,13 +29,13 @@
             <div class="panel panel-red">
                 <div class="panel-heading">
                     <div class="row">
-                        <a class="dashboard_link" href="{{ URL::to('backend/users/index') }}">
+                        <a class="dashboard_link" href="{{ isset($stats->total_users)?URL::to('backend/users/index'):URL::to('backend/physicians/index') }}">
                             <div class="col-xs-3">
                                 <i class="fa fa-users fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-right">
-                                <div>Total Users</div>
-                                <div class="huge">{{ $stats->total_users }}</div>
+                                <div>Total {{ isset($stats->total_users)?'User':'Hospital Physician' }}</div>
+                                <div class="huge">{{ isset($stats->total_users)?$stats->total_users: $stats->total_hospital_physician}}</div>
                             </div>
                         </a>
                     </div>
@@ -67,13 +47,13 @@
             <div class="panel panel-red">
                 <div class="panel-heading">
                     <div class="row">
-                        <a class="dashboard_link" href="javascript:void(0);">
+                        <a class="dashboard_link" href="{{ isset($stats->total_hospital)?URL::to('backend/hospitals/index'):'' }}">
                             <div class="col-xs-3">
                                 <i class="fa fa-medkit fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-right">
-                                <div>Total Hospital</div>
-                                <div class="huge">{{ $stats->total_hospital }}</div>
+                                <div>Total Hospital {{ isset($stats->total_hospital)?'':'Employee' }}</div>
+                                <div class="huge">{{ isset($stats->total_hospital)?$stats->total_hospital:$stats->total_hospital_employee }}</div>
                             </div>
                         </a>
                     </div>
@@ -90,15 +70,15 @@
                                 <i class="fa fa-check fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-right">
-                                <div>Total Verified Users</div>
-                                <div class="huge">{{ $stats->total_verified_users }}</div>
+                                <div>Total Verified {{ isset($stats->total_verified_users)?'User':'Hospital Physician' }}</div>
+                                <div class="huge">{{ isset($stats->total_verified_users)?$stats->total_verified_users:$stats->total_verified_physician }}</div>
                             </div>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
-
+        @if(isset($stats->total_physician))
         <div class="col-lg-4 col-md-6">
             <div class="panel panel-red">
                 <div class="panel-heading">
@@ -116,24 +96,25 @@
                 </div>
             </div>
         </div>
+        @endif
 
-        <div class="col-lg-4 col-md-6">
-            <div class="panel panel-red">
-                <div class="panel-heading">
-                    <div class="row">
-                        <a class="dashboard_link" href="javascript:void(0);">
-                            <div class="col-xs-3">
-                                <i class="fa fa-user-md fa-5x"></i>
-                            </div>
-                            <div class="col-xs-9 text-right">
-                                <div>Total Physician</div>
-                                <div class="huge">{{ $stats->total_physician }}</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {{--<div class="col-lg-4 col-md-6">--}}
+            {{--<div class="panel panel-red">--}}
+                {{--<div class="panel-heading">--}}
+                    {{--<div class="row">--}}
+                        {{--<a class="dashboard_link" href="javascript:void(0);">--}}
+                            {{--<div class="col-xs-3">--}}
+                                {{--<i class="fa fa-user-md fa-5x"></i>--}}
+                            {{--</div>--}}
+                            {{--<div class="col-xs-9 text-right">--}}
+                                {{--<div>Total Physician</div>--}}
+                                {{--<div class="huge">{{ $stats->total_physician }}</div>--}}
+                            {{--</div>--}}
+                        {{--</a>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
+            {{--</div>--}}
+        {{--</div>--}}
 
         {{-- <div class="col-lg-4 col-md-6">
             <div class="panel panel-green">

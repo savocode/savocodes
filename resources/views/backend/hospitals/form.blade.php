@@ -1,4 +1,15 @@
 <div class="row">
+    <div class="col-sm-12 form-group{{ $errors->has('type') ? ' has-error' : '' }}">
+        {!! Form::label('type', 'Type*') !!}
+        {!! Form::select('type', ['hospital' => 'Hospitals', 'health_care' => 'Health Care Center'], old('type'), ['class' => 'form-control']) !!}
+        @if ($errors->has('type'))
+            <span class="help-block">
+                <strong>{{ $errors->first('type') }}</strong>
+            </span>
+        @endif
+    </div>
+</div>
+<div class="row">
     <div class="col-sm-6 form-group{{ $errors->has('title') ? ' has-error' : '' }}">
         {!! Form::label('title', 'Title*') !!}
         {!! Form::text('title', old('title'), ['class' => 'form-control']) !!}

@@ -69,6 +69,10 @@ function fcmNotification($token, $title=null, $body=null, $payload=array())
         'Content-Type: application/json'
     ];
 
+//    echo "<pre>";
+//    print_r($fields);
+//    echo "<pre>";exit;
+
     $ch = curl_init();
     curl_setopt( $ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send' );
     curl_setopt( $ch,CURLOPT_POST, true );

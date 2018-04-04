@@ -46,7 +46,7 @@ return [
 
         'theme' => [
             'configuration' => [
-                'show_navigation_messages'      => false,
+                'show_navigation_messages'      => true,
                 'show_navigation_notifications' => false,
                 'show_navigation_flags'         => false,
             ],
@@ -79,65 +79,69 @@ return [
                             'icon'      => 'fa fa-user',
                             'regexPath' => '%/users(/index|/detail/\d+|/purchases/\d+)?|(/user-stats(/detail/\d+|/index)?)$%',
                         ],
-//                        [
-//                            'label' => 'Un-Verified Users',
-//                            'path'  => '/users/verified',
-//                            'icon'  => 'fa fa-times',
-//                            'regexPath' => false,
-//                        ],
+                    ],
+                ],
+                'hospital_physician' => [
+                    'label'     => 'Physicians',
+                    'path'      => '/physicians',
+                    'regexPath' => '%(/physicians(/edit/\d+|/verification|/index)?)|(/user-stats(/detail/\d+|/index)?)%',
+                    'icon'      => 'fa fa-users',
+                    'submenu'   => [
+                        [
+                            'label'     => 'All Physicians',
+                            'path'      => '/physicians/index',
+                            'icon'      => 'fa fa-user',
+                            'regexPath' => '%/physicians(/index|/detail/\d+|/purchases/\d+)?|(/user-stats(/detail/\d+|/index)?)$%',
+                        ],
                     ],
                 ],
                 'hospitals' => [
                     'label'     => 'Hospital Management',
                     'path'      => '/hospitals',
-                    'regexPath' => '%(/hospital(/edit/\d+|/verification|/index)?)|(/user-stats(/detail/\d+|/index)?)%',
+                    'regexPath' => '%(/hospital(/edit/\d+|/index|/create)?)%',
                     'icon'      => 'fa fa-medkit',
                     'submenu'   => [
                         [
                             'label'     => 'All Hospitals',
                             'path'      => '/hospitals/index',
                             'icon'      => 'fa fa-hospital-o',
-                            'regexPath' => '%/hospitals(/index|/detail/\d+|/create/\d+)?|(/user-stats(/detail/\d+|/index)?)$%',
+                            'regexPath' => '%/hospitals((/index|/create|/detail/\d+|/edit/\d+|/\d+/employees|/\d+/employee/create|/\d+/employee/detail/\d+|/\d+/employee/edit/\d+)?)$%',
                         ],
-                        [
-                            'label' => 'Hospital Locations',
-                            'path'  => '/hospitals/location',
-                            'icon'  => 'fa fa-location-arrow',
-                            'regexPath' => false,
-                        ],
+//                        [
+//                            'label' => 'Hospital Locations',
+//                            'path'  => '/hospitals/location',
+//                            'icon'  => 'fa fa-location-arrow',
+//                            'regexPath' => false,
+//                        ],
                     ],
                 ],
                 'referrals' => [
                     'label' => 'Referrals',
                     'path' => '/referrals',
-                    'regexPath' => '%(/referrals(/approved|/canceled)?)%',
+                    'regexPath' => '%(/referrals(/index|/canceled)?)%',
                     'icon' => 'fa fa-user-plus',
                     'submenu' => [
                         [
-                            'label' => 'Approved Referrals',
-                            'path' => '/referrals/approved',
-                            'regexPath' => '%(/referrals/approved)$%',
+                            'label' => 'All Referrals',
+                            'path' => '/referrals/index',
+                            'regexPath' => '%(/referrals/index|/detail/\d+)$%',
                             'icon' => 'fa fa-check-square-o',
-                        ],
-                        [
-                            'label' => 'Rejected Referrals',
-                            'path' => '/referrals/canceled',
-                            'regexPath' => '%(/referrals/canceled)$%',
-                            'icon' => 'fa fa-ban',
                         ],
                     ],
                 ],
                 'professions' => [
                     'label' => 'Professions',
-                    'path' => '/professions/index',
-                    'regexPath' => '%/professions(/index|/create|/edit/\d+)?$%',
+                    'path' => '/settings/profession',
+                    'regexPath' => false,
                     'icon' => 'fa fa-yelp',
+
                 ],
                 'criteria' => [
                     'label' => 'Criteria',
-                    'path' => '/criteria/index',
-                    'regexPath' => '%(/reviews/index)$%',
+                    'path' => '/settings/criteria',
+                    'regexPath' => false,
                     'icon' => 'fa fa-star',
+
                 ],
                 'reports' => [
                     'label' => 'Reports & Analytics',
@@ -146,40 +150,16 @@ return [
                     'icon' => 'fa fa-bar-chart',
                     'submenu' => [
                         [
-                            'label' => 'Dashboard',
-                            'path' => '/reports/dashboard',
-                            'regexPath' => '%(/reports/dashboard)$%',
+                            'label' => 'Referrals',
+                            'path' => '/reports/referrals',
+                            'regexPath' => '%(/reports/referrals)$%',
                             'icon' => 'fa fa-dashboard',
-                        ],
-                        [
-                            'label' => 'Car Statistics',
-                            'path' => '/reports/car/statistics',
-                            'regexPath' => '%(/reports/car/statistics)$%',
-                            'icon' => 'fa fa-taxi',
-                        ],
-                        [
-                            'label' => 'Popular Driver',
-                            'path' => '/reports/popular/driver',
-                            'regexPath' => '%(/reports/popular/driver)$%',
-                            'icon' => 'fa fa-user',
                         ]
                     ],
                 ],
                 'settings' => [
                     'label' => 'SYSTEM SETTINGS',
                     'type' => 'heading',
-                ],
-                'editsettings' => [
-                    'label' => 'Settings',
-                    'path' => '/system/edit-settings',
-                    'regexPath' => '%(/system/edit-settings)%',
-                    'icon' => 'fa fa-cog',
-                ],
-                'schools' => [
-                    'label' => 'Schools',
-                    'path' => '/schools/index',
-                    'regexPath' => '%/schools(/index|/create|/edit/\d+)?$%',
-                    'icon' => 'fa fa-building',
                 ],
                 'editprofile' => [
                     'label' => 'Profile Setting',

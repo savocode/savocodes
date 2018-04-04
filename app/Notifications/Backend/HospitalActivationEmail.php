@@ -40,23 +40,34 @@ class HospitalActivationEmail extends Notification
      */
     public function toMail($notifiable)
     {
-        $temp = $this->is_active == 0?'Deactivated':'Activated';
-        $mailMessage = (new MailMessage)
-            ->subject( Email::makeSubject('Hospital '. $temp) )
-            ->greeting($this->hospital->title);
-
         if($this->is_active == 0)
         {
+            $mailMessage = (new MailMessage)
+                ->subject( Email::makeSubject('Hospital Deactivated') )
+                ->greeting($this->hospital->title);
+
             $mailMessage->line('This hospital has been blocked by the '.constants('global.site.name'). ' admin')
                         ->line('Your account are no longer active on the employee panel');
         }
-        else
+        else if($this->is_active == 1)
         {
+            $mailMessage = (new MailMessage)
+                ->subject( Email::makeSubject('Hospital Activated') )
+                ->greeting($this->hospital->title);
 
             $mailMessage->line('This hospital has been activates by the '.constants('global.site.name'). ' admin')
                         ->line("Click on the button to go to admin panel")
                         ->action(constants('global.site.name').' Employee Panel', url('backend/login') )
                         ->line("Please login and check every things works fine");
+        }
+        else if($this->is_active == 2)
+        {
+            $mailMessage = (new MailMessage)
+                ->subject( Email::makeSubject('Hospital Deleted') )
+                ->greeting($this->hospital->title);
+
+            $mailMessage->line('This hospital has been deleted by the '.constants('global.site.name'). ' admin')
+                ->line('Your account are no longer active on the employee panel');
         }
 
 

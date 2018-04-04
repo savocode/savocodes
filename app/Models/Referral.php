@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\SavingReferral;
+use App\Classes\RijndaelEncryption;
 use Illuminate\Database\Eloquent\Model;
 
 class Referral extends Model
@@ -25,20 +26,38 @@ class Referral extends Model
     /**
      * @Scopes
      */
-    public function getStatusTextAttribute()
+    public function getStatusTextApiAttribute()
     {
         switch ($this->status) {
             case 0:
-                return 'Pending';
+                return 'pending';
                 break;
-            case 0:
+            case 1:
                 return 'Accepted';
                 break;
-            case 0:
+            case 2:
                 return 'Rejected';
                 break;
             default:
                 return 'Unknown';
+                break;
+        }
+    }
+
+    public function getStatusTextAttribute()
+    {
+        switch ($this->status) {
+            case 0:
+                return '<span class="label label-warning">Pending</span>';
+                break;
+            case 1:
+                return '<span class="label label-success">Accepted</span>';
+                break;
+            case 2:
+                return '<span class="label label-danger">Rejected</span>';
+                break;
+            default:
+                return '<span class="label label-primary">Unknown</span>';
                 break;
         }
     }
@@ -54,6 +73,35 @@ class Referral extends Model
         return $this->attributes['status'] > 0 ? $this->statusHistory()->get()->pluck('reason') : [];
     }
 
+    public function getDiagnosisDecryptedAttribute()
+    {
+        return ucwords(RijndaelEncryption::decrypt($this->attributes['diagnosis']));// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
+    }
+
+    public function getAgeDecryptedAttribute()
+    {
+        return RijndaelEncryption::decrypt($this->attributes['age']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
+    }
+
+    public function getFirstNameDecryptedAttribute()
+    {
+        return RijndaelEncryption::decrypt($this->attributes['first_name']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
+    }
+
+    public function getLastNameDecryptedAttribute()
+    {
+        return RijndaelEncryption::decrypt($this->attributes['last_name']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
+    }
+
+    public function getFullNameDecryptedAttribute()
+    {
+        return RijndaelEncryption::decrypt($this->attributes['first_name']) . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
+    }
+
+    public function getPhoneDecryptedAttribute()
+    {
+        return RijndaelEncryption::decrypt($this->attributes['phone']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
+    }
     /*
      * @Relationships
      */

@@ -21,7 +21,7 @@
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>{{ $record->title }}
+      <h1>{{ $hospital->title }}
       <small>Add new employee</small>
       </h1>
     </section>
@@ -38,7 +38,7 @@
                 <h3 class="box-title">Create Mode</h3>
               </div>
               <div class="box-body">
-                  {!! Form::open(['url' => 'backend/'.$moduleProperties['controller'].'/'.$record->id.'/employee/create', 'files' => 'true']) !!}
+                  {!! Form::open(['url' => 'backend/'.$moduleProperties['controller'].'/'.$hospital->id.'/employee/create', 'files' => 'true']) !!}
                     @include( 'backend/' . $moduleProperties['viewDir'] . '.employees.form' )
                   {!! Form::close() !!}
               </div>

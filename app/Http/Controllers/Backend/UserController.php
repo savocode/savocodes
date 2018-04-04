@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Notifications\Backend\UserActivationEmail;
+use App\Notifications\Backend\EmployeeDeleteEmail;
+
 use App\Models\City;
 use App\Models\Country;
 use App\Models\Profession;
@@ -11,6 +14,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\UserMeta;
 use App\Models\UserVerification;
+
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
@@ -112,7 +116,6 @@ class UserController extends BackendController
         $state       = $request->get('state');
         $city        = $request->get('city');
         $gender      = $request->get('gender');
-       // $age         = $request->get('age');
         $profession  = $request->get('profession');
 
         $query = User::users();
@@ -136,14 +139,8 @@ class UserController extends BackendController
         }
 
         return $datatables->eloquent($query)
-//            ->filter(function ($query) {
-//                if (request()->has('search.value')) {
-//                    $query->search(request('search.value'));
-//                }
-//            }, false)
-            ->order(function ($query) {
-                $query->latest();
-            })
+            ->orderColumn('created_at', 'created_at $1')
+
             ->editColumn('first_name', function ($user) {
                 return $user->first_name_decrypted;
             })
@@ -181,17 +178,14 @@ class UserController extends BackendController
         return backend_view($this->thisModule['viewDir'] . '.detail', compact('record', 'userMeta'));
     }
 
-    public function purchases(User $record)
-    {
-        return backend_view($this->thisModule['viewDir'] . '.purchases', compact('record'));
-    }
-
     public function destroy(User $record)
     {
         if ($record->isAdmin() || in_array($record->id, array_get($this->thisModule, 'undeleteable', []))) {
             abort(404);
         }
 
+        if(valid_email($record->email_decrypted))
+            $record->notify(new EmployeeDeleteEmail($record));
         $record->delete();
 
         session()->flash('alert-success', str_singular($this->thisModule['shortModuleName']) . ' has been deleted successfully!');
@@ -206,6 +200,7 @@ class UserController extends BackendController
 
         $record->deactivate();
 
+        $record->notify(new UserActivationEmail($record, 0, 1));
         session()->flash('alert-success', str_singular($this->thisModule['shortModuleName']) . ' has been blocked successfully!');
         return redirect('backend/' . $this->thisModule['controller']);
     }
@@ -218,6 +213,7 @@ class UserController extends BackendController
 
         $record->activate();
 
+        $record->notify(new UserActivationEmail($record, 1, 1));
         session()->flash('alert-success', str_singular($this->thisModule['shortModuleName']) . ' has been unblocked successfully!');
         return redirect('backend/' . $this->thisModule['controller']);
     }

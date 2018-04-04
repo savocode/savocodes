@@ -16,7 +16,7 @@
     <section class="content-header">
       <h1>{{ $moduleProperties['longModuleName'] }}
           <div class="pull-right">
-              <a href="{{ backend_url(str_singular($moduleProperties['controller']).'/edit/'. $record->id) }}" type="button" class="btn btn-primary btn-flat">
+              <a href="{{ backend_url($moduleProperties['controller'].'/edit/'. $record->id) }}" type="button" class="btn btn-primary btn-flat">
                   Edit {{ $record->title }}
               </a>
           </div>
@@ -38,6 +38,9 @@
 
                 <dt>Title</dt>
                 <dd>{{ $record->title }}</dd>
+
+                <dt>Type</dt>
+                <dd>{{ $record->type_text }}</dd>
 
                 <dt>Number Of Admins</dt>
                 <dd>
@@ -78,9 +81,6 @@
 
                 <dt>Registration Date</dt>
                 <dd>{{ $record->created_at->format(constants('back.theme.modules.datetime_format')) }}</dd>
-
-                <dt>Update </dt>
-                <dd>{!! $record->is_updated !!}</dd>
 
               </dl>
             </div>

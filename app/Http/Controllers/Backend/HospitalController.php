@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Classes\Email;
 //use App\Notifications\Backend\EmployeeUpdate;
-use Intervention\Image\Facades\Image;
+use Gregwar\Image\Image;
 use App\Classes\RijndaelEncryption;
 
 use App\Events\UserPasswordChanged;
@@ -12,6 +12,7 @@ use App\Events\EmployeeUpdate;
 use App\Events\Backend\UserActivated;
 use App\Events\Backend\UserDeactivated;
 
+use App\Notifications\Backend\EmployeeDeleteEmail;
 
 use App\Models\City;
 use App\Models\Country;
@@ -24,6 +25,7 @@ use Carbon\Carbon;
 use DB;
 //use Dotenv\Validator;
 use Illuminate\Http\Request;
+use League\Flysystem\Exception;
 use View;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\Validator;
@@ -56,26 +58,36 @@ class HospitalController extends BackendController
 
     public function index()
     {
-        return backend_view($this->thisModule['viewDir'] . '.index');
+        $type = ['' => 'Select type', 'hospital' => 'Hospitals', 'health_care' => 'Health Care Center'];
+        return backend_view($this->thisModule['viewDir'] . '.index', compact('type'));
     }
 
     public function data(Datatables $datatables, Request $request)
     {
+        $type  = $request->get('type');
+        $query = Hospital::query();
 
-        return $datatables->eloquent(Hospital::query())
+        if($type)
+        {
+            $query->where('type', $type);
+        }
+
+        return $datatables->eloquent($query)
             ->filter(function ($query) {
                 if (request()->has('search.value')) {
                     $query->where('title', 'like', '%'.request('search.value').'%');
                 }
             }, false)
-            ->order(function ($query) {
-                $query->latest();
-            })
+            ->orderColumn('created_at', 'created_at $1')
+
             ->editColumn('timing_open', function ($record) {
                 return $record->getTimeFormatted($record->timing_open);
             })
             ->editColumn('timing_close', function ($record) {
                 return $record->getTimeFormatted($record->timing_close);
+            })
+            ->editColumn('type', function ($record) {
+                return $record->type_text;
             })
             ->editColumn('is_24_7_phone', function ($record) {
                 return $record->is_phone;
@@ -102,9 +114,10 @@ class HospitalController extends BackendController
 
     public function destroy(Hospital $record)
     {
-        $record->delete();
+        $record->deleteHospital();
 
         session()->flash('alert-success', str_singular($this->thisModule['shortModuleName']) . ' has been deleted successfully!');
+
         return redirect('backend/' . $this->thisModule['controller']);
     }
 
@@ -113,7 +126,7 @@ class HospitalController extends BackendController
         $record->deactivate();
 
         session()->flash('alert-success', str_singular($this->thisModule['shortModuleName']) . ' has been blocked successfully!');
-        return redirect('backend/' . $this->thisModule['controller']);
+        return redirect('backend/' . $this->thisModule['controller'] . '/index');
     }
 
     public function unblock(Hospital $record)
@@ -121,7 +134,7 @@ class HospitalController extends BackendController
         $record->activate();
 
         session()->flash('alert-success', str_singular($this->thisModule['shortModuleName']) . ' has been unblocked successfully!');
-        return redirect('backend/' . $this->thisModule['controller']);
+        return redirect('backend/' . $this->thisModule['controller'] . '/index');
     }
 
     public function showCreateForm()
@@ -141,6 +154,7 @@ class HospitalController extends BackendController
             'timing_open'   => 'required|string|date_format:H:i',
             'timing_close'  => 'required|string|date_format:H:i|after:timing_open',
             'description'   => 'required|string|min:50',
+            'type'          => 'required|in:hospital,health_care',
         ],
         [
             'title.unique'                  => 'This Hospital is already exist',
@@ -192,6 +206,7 @@ class HospitalController extends BackendController
             'timing_open'   => 'required|string|date_format:H:i',
             'timing_close'  => 'required|string|date_format:H:i|after:timing_open',
             'description'   => 'required|string|min:50',
+            'type'          => 'required|in:hospital,health_care',
         ],
         [
             'title.unique'                  => 'This Hospital is already exist',
@@ -204,6 +219,7 @@ class HospitalController extends BackendController
         }
 
         $dataToUpdate['title']          = $request->get('title', false);
+        $dataToUpdate['type']           = $request->get('type', false);
         $dataToUpdate['description']    = $request->get('description', false);
         $dataToUpdate['address']        = $request->get('address', false);
         $dataToUpdate['location']       = $request->get('location', false);
@@ -279,14 +295,9 @@ class HospitalController extends BackendController
         }
 
         return $datatables->eloquent($query)
-//            ->filter(function ($query) {
-//                if (request()->has('search.value')) {
-//                    $query->search(request('search.value'));
-//                }
-//            }, false)
-            ->order(function ($query) {
-                $query->latest();
-            })
+
+            ->orderColumn('created_at', 'created_at $1')
+
             ->editColumn('first_name', function ($user) {
                 return $user->first_name_decrypted;
             })
@@ -320,13 +331,14 @@ class HospitalController extends BackendController
             return redirect()->back();
         }
 
+        $hospital       = $record;
         $states         = State::listStates(Country::DEFAULT_COUNTRY_ID)->toArray();
         $firstState     = key($states);
         $states         = ['' => 'Select State'] + $states;
         $cities         = ['' => 'Select City']  + City::listCities($firstState)->toArray();
         $genders        = ['' => 'Select Gender', 'Male' => 'Male', 'Female' => 'Female'];
 ;
-        return backend_view($this->thisModule['viewDir'] . '.employees.create', compact('record', 'states', 'cities', 'genders'));
+        return backend_view($this->thisModule['viewDir'] . '.employees.create', compact('hospital', 'states', 'cities', 'genders'));
     }
 
     public function createEmployee(Request $request, Hospital $record)
@@ -360,7 +372,12 @@ class HospitalController extends BackendController
             $imageName  = \Illuminate\Support\Str::random(12) . '.' . $request->file('profile_picture')->getClientOriginalExtension();
             $path       = public_path( config('constants.front.dir.profilePicPath') );
             $request->file('profile_picture')->move($path, $imageName);
-            $input['profile_picture'] = $imageName;
+
+            if ( Image::open( $path . '/' . $imageName )->scaleResize(200, 200)->save( $path . '/' . $imageName ) )
+            {
+                $input['profile_picture'] = $imageName;
+            }
+
         }
 
         foreach (collect(User::getEncryptionFields()) as $field)
@@ -444,8 +461,11 @@ class HospitalController extends BackendController
             $path       = public_path( config('constants.front.dir.profilePicPath') );
             $request->file('profile_picture')->move($path, $imageName);
 
-            $dataToUpdate['profile_picture'] = $imageName;
-            $oldImageToDelete                = $user->profile_picture;
+            if ( Image::open( $path . '/' . $imageName )->scaleResize(200, 200)->save( $path . '/' . $imageName ) )
+            {
+                $dataToUpdate['profile_picture'] = $imageName;
+                $oldImageToDelete                = $user->profile_picture;
+            }
         }
 
         if($request->has('password'))
@@ -522,6 +542,7 @@ class HospitalController extends BackendController
 
     public function destroyEmployee(User $record)
     {
+        $record->notify(new EmployeeDeleteEmail($record));
         $record->delete();
 
         session()->flash('alert-success', str_singular($this->thisModule['shortModuleName']) . ' Employee has been deleted successfully!');

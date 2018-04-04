@@ -115,4 +115,21 @@ class DashboardController extends BackendController
         session()->flash('alert-success', 'Settings have been updated successfully!');
         return redirect(route('backend.settings'));
     }
+
+    public function getEmployeeIndex()
+    {
+        $allUsers = User::users()->whereHospitalId(user()->hospital_id)->get();
+
+        $verifiedUsers = $allUsers->filter(function ($record) {
+            return ($record->isVerified());
+        });
+
+        $stats                           = new \stdClass;
+        $stats->total_hospital_physician = $allUsers->count();
+        $stats->total_hospital_employee  = User::whereRoleId(User::ROLE_HOSPITAL_EMPLOYEES)->whereHospitalId(user()->hospital_id)->count();
+        $stats->total_verified_physician = $verifiedUsers->count();
+
+        return backend_view('dashboard', compact('stats'));
+
+    }
 }

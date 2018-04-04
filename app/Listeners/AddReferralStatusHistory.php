@@ -8,6 +8,7 @@ use App\Models\Referral;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Auth;
+use Illuminate\Support\Facades\Request;
 
 class AddReferralStatusHistory
 {
@@ -39,10 +40,12 @@ class AddReferralStatusHistory
         }
 
         if (isset($status)) {
-            $user = Auth::check() ? Auth::user() : JWTUserTrait::getUserInstance();
+            $user   = Auth::check() ? Auth::user() : JWTUserTrait::getUserInstance();
+            $reason = Request::get('reason', NULL);
 
             $statusHistory = $referral->statusHistory()->getRelated()->fill([
                 'status' => $status,
+                'reason' => $reason,
             ]);
 
             $statusHistory->referral()->associate($referral);

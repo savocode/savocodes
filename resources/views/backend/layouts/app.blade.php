@@ -53,7 +53,7 @@
 
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
-        @if ( constants('back.theme.configuration.show_navigation_messages') )
+        @if ( constants('back.theme.configuration.show_navigation_messages') && user()->isEmployee() )
           <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">

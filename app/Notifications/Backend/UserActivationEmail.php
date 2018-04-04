@@ -14,11 +14,13 @@ class UserActivationEmail extends Notification
 
     public $user;
     public $is_active;
+    public $is_physician;
 
-    public function __construct($user, $is_active)
+    public function __construct($user, $is_active, $is_physician = 0)
     {
-        $this->is_active = $is_active;
-        $this->user      = $user;
+        $this->is_active    = $is_active;
+        $this->user         = $user;
+        $this->is_physician = $is_physician;
     }
 
     /**
@@ -47,10 +49,15 @@ class UserActivationEmail extends Notification
 
         if($this->is_active)
         {
-            $mailMessage->line('Your account  has been activated by the '.constants('global.site.name'). ' admin')
-                ->line("Click on the button to go to admin panel")
-                ->action(constants('global.site.name').' Employee Panel', url('backend/login') )
-                ->line("Please login and check every things works fine");
+            $mailMessage->line('Your account  has been activated by the '.constants('global.site.name'). ' admin');
+
+            if($this->is_physician == 0)
+            {
+                $mailMessage->line("Click on the button to go to admin panel")
+                            ->action(constants('global.site.name').' Employee Panel', url('backend/login') )
+                            ->line("Please login and check every things works fine");
+            }
+
         }
         else
         {

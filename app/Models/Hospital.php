@@ -14,6 +14,7 @@ class Hospital extends Model
 
     protected $fillable = [
         'title',
+        'type',
         'is_active',
         'description',
         'address',
@@ -55,6 +56,23 @@ class Hospital extends Model
             '<span class="label label-danger">In-Active</span>';
     }
 
+    public function getTypeTextAttribute()
+    {
+        switch($this->attributes['type'])
+        {
+            case 'hospital':
+                return 'Hospital';
+                break;
+            case 'health_care':
+                return 'Health Care Center';
+                break;
+            default:
+                return 'Unknown';
+                break;
+        }
+
+    }
+
     public function getIsUpdatedAttribute()
     {
         if($this->attributes['created_at'] == $this->attributes['updated_at'] || $this->attributes['updated_at'] == NULL)
@@ -93,6 +111,18 @@ class Hospital extends Model
         Notification::send($users->get(), new HospitalActivationEmail($this, 0));
 
       //  event(new HospitalActivated($this));
+    }
+
+    public function deleteHospital()
+    {
+        $users  = $this->users()->whereRoleId(User::ROLE_HOSPITAL_EMPLOYEES);//->get();
+        $users->update(['is_active' => 0]);
+        $hospital = $this;
+
+        $this->delete();
+
+        Notification::send($users->get(), new HospitalActivationEmail($hospital, 2));
+
     }
 
 

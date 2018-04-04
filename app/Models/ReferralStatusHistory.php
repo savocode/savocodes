@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ReferralStatusHistory extends Model
 {
-    protected $fillable = ['status'];
+    protected $fillable = ['status', 'reason'];
 
     public function setUpdatedAt($value)
     {
@@ -18,6 +18,25 @@ class ReferralStatusHistory extends Model
         return null;
     }
 
+
+
+    public function getStatusTextAttribute()
+    {
+        switch ($this->status) {
+            case 0:
+                return '<span class="label label-warning">Pending</span>';
+                break;
+            case 1:
+                return '<span class="label label-success">Accepted</span>';
+                break;
+            case 2:
+                return '<span class="label label-danger">Rejected</span>';
+                break;
+            default:
+                return '<span class="label label-primary">Unknown</span>';
+                break;
+        }
+    }
     /*
      * @Relationships
      */

@@ -6,16 +6,23 @@
             </div>
             <div class="pull-left info">
               <p>{{ user()->full_name_decrypted }}</p>
-              <a href="{{ url('/') }}" target="_blank">(View front website)</a>
+              <a  style="display: none;" href="{{ url('/') }}" target="_blank">(View front website)</a>
             </div>
           </div>
+        <br>
 
           <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu">
             {!! backend_sidebar_generator( constants('back.sidebar.menu'), [
-                'dealers'         => ($isAdmin = user()->isAdmin()),
-                'settings'        => $isAdmin,
-                'pages'           => $isAdmin,
+                'users'              => ($isAdmin = user()->isAdmin()),
+                'hospitals'          => $isAdmin,
+                'professions'        => $isAdmin,
+                'criteria'           => $isAdmin,
+                'reports'            => false,
+               // 'settings'           => $isAdmin,
+                'referrals'          => $isEmployee = user()->isEmployee(),
+                'hospital_physician' => $isEmployee,
+               // 'settings'           => $isEmployee,
             ] ) !!}
           </ul>
     </section>
