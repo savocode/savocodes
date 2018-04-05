@@ -21,8 +21,8 @@
     appConfig.set('yajrabox.ajax', base_url + '/referrals/data');
     appConfig.set('dt.searching', false);
     appConfig.set('yajrabox.ajax.data', function(data) {
-      data.diagnosis       = jQuery('#diagnosis option:selected').val();
-      data.age             = jQuery('#age option:selected').val();
+      data.diagnosis       = jQuery('#diagnosis option:selected').text();
+      data.age             = jQuery('#age option:selected').text();
       data.status          = jQuery('#status option:selected').val();
     });
     appConfig.set('yajrabox.columns', [

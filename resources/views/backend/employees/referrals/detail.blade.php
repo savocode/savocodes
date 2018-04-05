@@ -70,6 +70,14 @@
 
                                     <dt>Created At</dt>
                                     <dd>{!! $h->created_at->format(constants('back.theme.modules.datetime_format'))  !!} </dd>
+
+                                    @if($h->status > 0)
+                                        <dt>Referral {{ $h->status == 1?'Accepted': 'Rejected' }} At</dt>
+                                        <dd>{!! Carbon\Carbon::parse($h->updated_at)->format(constants('back.theme.modules.datetime_format'))  !!} </dd>
+                                    @else
+                                        <dt>Referral Pending Since</dt>
+                                        <dd>{!! $h->created_at->format(constants('back.theme.modules.datetime_format'))  !!}</dd>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach

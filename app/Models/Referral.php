@@ -75,7 +75,7 @@ class Referral extends Model
 
     public function getDiagnosisDecryptedAttribute()
     {
-        return ucwords(RijndaelEncryption::decrypt($this->attributes['diagnosis']));// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
+        return RijndaelEncryption::decrypt($this->attributes['diagnosis']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
     }
 
     public function getAgeDecryptedAttribute()

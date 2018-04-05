@@ -58,17 +58,17 @@ class EmployeeController extends BackendController
         $states         = ['' => 'Select State'] + $states;
         $cities         = ['' => 'Select City'] + City::listCities($firstState)->toArray();
         $professions    = ['' => 'Select Profession'] + Profession::all()->pluck('title', 'id')->toArray();
-        $genders        = ['' => 'Select Gender', 'Male' => 'Male', 'Female' => 'Female'];
+        $status         = ['' => 'Select Status', 0 => 'In Active', 1 => 'Active'];
         $hospital       = user()->hospital()->first();
 
-        return backend_view($this->thisModule['viewPhysicianDir'] . '.index', compact('hospital', 'states', 'cities', 'professions', 'genders'));
+        return backend_view($this->thisModule['viewPhysicianDir'] . '.index', compact('hospital', 'states', 'cities', 'professions', 'status'));
     }
 
     public function physiciansData(Datatables $datatables, Request $request)
     {
         $state       = $request->get('state');
         $city        = $request->get('city');
-        $gender      = $request->get('gender');
+        $status      = $request->get('status');
         $profession  = $request->get('profession');
 
         $query = User::users()->whereHospitalId(user()->hospital_id);
@@ -85,10 +85,8 @@ class EmployeeController extends BackendController
             $query->where('profession_id', $profession);
         }
 
-        if ($gender) {
-            $query->whereHas('metas', function ($query) use ($gender) {
-                $query->where('key', 'gender')->where('value', 'LIKE', $gender . '%');
-            });
+        if ($status == '0' || !empty($status)) {
+            $query->where('is_active', '=', intval($status));
         }
 
         return $datatables->eloquent($query)
@@ -156,16 +154,15 @@ class EmployeeController extends BackendController
         $diagnosis  = $request->get('diagnosis');
         $age        = $request->get('age');
         $status     = $request->get('status', '');
-        //echo $status;exit;
 
         $query = Referral::whereHospitalId(user()->hospital_id)->whereHas('doctor');//->with('doctor');
 
-        if ($diagnosis) {
+        if ($diagnosis && $diagnosis != 'Select Diagnosis') {
             $diagnosis = RijndaelEncryption::encrypt($diagnosis);
             $query->where('diagnosis', $diagnosis);
         }
 
-        if ($age) {
+        if ($age && $age != 'Select Age') {
             $age = RijndaelEncryption::encrypt($age);
             $query->where('age', $age);
         }

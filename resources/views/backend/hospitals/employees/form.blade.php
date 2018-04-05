@@ -48,8 +48,8 @@
 
 <div class="row">
     <div class="col-sm-6 form-group{{ $errors->has('phone') ? ' has-error' : '' }}">
-        {!! Form::label('phone', 'Phone') !!}
-        {!! Form::text('phone', isset($employee->phone)?$employee->phone_decrypted:old('phone'), ['class' => 'form-control']) !!}
+        {!! Form::label('phone', 'Phone (e.g : +14155552671)') !!}
+        {!! Form::text('phone', isset($employee->phone)?$employee->phone_decrypted:old('phone'), ['class' => 'form-control', 'placeholder'=>'+14155552671']) !!}
         @if ($errors->has('phone'))
             <span class="help-block">
                 <strong>{{ $errors->first('phone') }}</strong>

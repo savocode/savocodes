@@ -21,7 +21,7 @@ Route::prefix('')->namespace('Frontend')->group(function () {
         return view('welcome');
     });
     Route::get('/', function() {
-        return view('welcome');
+        //return view('welcome');
     });
 
     // Reset password via link
@@ -115,13 +115,6 @@ Route::prefix('backend')->namespace('Backend')->group(function () {
             Route::post('/referrals/reject/{record}',    'EmployeeController@referralsReject');
 
             Route::get('/reports/referrals',             'EmployeeController@referralsReports');
-//            Route::get('/users/block/{record}',         'UserController@block');
-//            Route::get('/users/unblock/{record}',       'UserController@unblock');
-//            Route::get('/users/verified/{record}',      'UserController@verify');
-//            Route::get('/users/unverified/{record}',    'UserController@unverify');
-//            Route::post('/users/{record}',              'UserController@handleVerification');
-
-//            Route::delete('/users/{record}',            'UserController@destroy');
         });
     });
 });

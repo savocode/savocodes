@@ -39,7 +39,7 @@
             </div>
             @endif
             <div class="form-group has-feedback">
-                <input type="email" name="email" class="form-control" placeholder="Email" value="{{ old('email') }}">
+                <input type="email" name="email" class="form-control" placeholder="Email" value="">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">

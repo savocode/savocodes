@@ -84,14 +84,14 @@ return [
                 'hospital_physician' => [
                     'label'     => 'Physicians',
                     'path'      => '/physicians',
-                    'regexPath' => '%(/physicians(/edit/\d+|/verification|/index)?)|(/user-stats(/detail/\d+|/index)?)%',
+                    'regexPath' => '%(/physicians(/index|/detail/\d+)?)%',
                     'icon'      => 'fa fa-users',
                     'submenu'   => [
                         [
                             'label'     => 'All Physicians',
                             'path'      => '/physicians/index',
                             'icon'      => 'fa fa-user',
-                            'regexPath' => '%/physicians(/index|/detail/\d+|/purchases/\d+)?|(/user-stats(/detail/\d+|/index)?)$%',
+                            'regexPath' => '%/physicians(/index|/detail/\d+)$%',
                         ],
                     ],
                 ],
@@ -124,7 +124,7 @@ return [
                         [
                             'label' => 'All Referrals',
                             'path' => '/referrals/index',
-                            'regexPath' => '%(/referrals/index|/detail/\d+)$%',
+                            'regexPath' => '%/referrals(/index|/detail/\d+)$%',
                             'icon' => 'fa fa-check-square-o',
                         ],
                     ],

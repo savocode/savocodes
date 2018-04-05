@@ -407,7 +407,7 @@ class WebserviceController extends ApiBaseController {
     public function searchHospitalsByZipCode(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'zipcode' => 'required_without:city|min:5|max:7',
+            'zipcode' => 'required_without:city|min:6|max:9',
             'city'    => 'required_without:zipcode',
         ]);
 
@@ -417,10 +417,13 @@ class WebserviceController extends ApiBaseController {
 
         $perPage = $request->get('limit', constants('api.config.defaultPaginationLimit'));
 
-        if ( $request->has('zipcode') ) {
+        if ( $request->has('zipcode') )
+        {
             $zipCode = preg_replace('%[^a-zA-Z0-9]%', '', $request->get('zipcode')); // replace everything except alpha-numeric
             $hospitals = Hospital::active()->where('zip_code', '=', $zipCode)->paginate($perPage);
-        } else {
+        }
+        else
+        {
             $hospitals = Hospital::active()->where('location', 'like', '%'.$request->get('city').'%')->paginate($perPage);
         }
 
@@ -484,13 +487,15 @@ class WebserviceController extends ApiBaseController {
             'hospital_id' => 'required',
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails())
+        {
             return RESTAPIHelper::response(array_flatten($validator->messages()->toArray()), false, 'validation_error');
         }
 
         $hospital = Hospital::active()->find($request->get('hospital_id'));
 
-        if (!$hospital) {
+        if (!$hospital)
+        {
             return RESTAPIHelper::response('Hospital does not exist.', false, 'validation_error');
         }
 

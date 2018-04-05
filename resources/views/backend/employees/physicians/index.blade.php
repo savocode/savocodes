@@ -23,7 +23,7 @@
     appConfig.set('yajrabox.ajax.data', function(data) {
       data.state       = jQuery('select[name=state]').val();
       data.city        = jQuery('select[name=city]').val();
-      data.gender      = jQuery('select[name=gender]').val();
+      data.status      = jQuery('select[name=status]').val();
    //   data.age         = jQuery('select[name=age]').val();
       data.profession  = jQuery('select[name=profession]').val();
      // data.school_name = jQuery('select[name=school_name]').val();
@@ -91,8 +91,8 @@
                             {!! Form::select('city', $cities, null, ['class' => 'form-control chosen', 'id' => 'ddl_cities']) !!}
                         </div>
                           <div class="col-sm-3">
-                              <label>Gender</label>
-                              {!! Form::select('gender', $genders, null, ['class' => 'form-control chosen']) !!}
+                              <label>Status</label>
+                              {!! Form::select('status', $status, null, ['class' => 'form-control chosen']) !!}
                           </div>
                         <div class="col-sm-3">
                             <label>Professions</label>

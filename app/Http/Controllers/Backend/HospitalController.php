@@ -146,7 +146,7 @@ class HospitalController extends BackendController
     {
         $validator = Validator::make($request->all(), [
             'title'         => 'required|string|unique:hospitals|max:500',
-            'phone'         => 'string|nullable',
+            'phone'         => 'string|phone:US,BE',
             'address'       => 'string|nullable',
             'location'      => 'string|nullable',
             'zip_code'      => 'required|string',
@@ -166,7 +166,20 @@ class HospitalController extends BackendController
             return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        $input  = $request->all();
+        $input             = $request->all();
+        $input['zip_code'] = preg_replace('%[^a-zA-Z0-9]%', '', $request->get('zip_code'));
+
+        if ( $request->has('phone') )
+        {
+            try
+            {
+                $input['phone'] = phone($request->get('phone'), 'US')->formatE164();
+            }
+            catch (\Exception $e)
+            {
+                $input['phone'] = '';
+            }
+        }
 
         foreach ($input as $key => $value)
         {
@@ -174,6 +187,7 @@ class HospitalController extends BackendController
         }
 
         $input['is_active'] = 1;
+
         $hospital = Hospital::create($input);
 
         session()->flash('alert-success', str_singular($this->thisModule['shortModuleName']) . ' created successfully');
@@ -198,7 +212,7 @@ class HospitalController extends BackendController
     {
         $validator = Validator::make($request->all(), [
             'title'         => 'required|string|unique:hospitals,title,'.$record->id.',id|max:500',
-            'phone'         => 'string|nullable',
+            'phone'         => 'string||phone:US,BE',
             'address'       => 'string|nullable',
             'location'      => 'string|nullable',
             'zip_code'      => 'required|string',
@@ -223,11 +237,23 @@ class HospitalController extends BackendController
         $dataToUpdate['description']    = $request->get('description', false);
         $dataToUpdate['address']        = $request->get('address', false);
         $dataToUpdate['location']       = $request->get('location', false);
-        $dataToUpdate['zip_code']       = $request->get('zip_code', false);
+        $dataToUpdate['zip_code']       = preg_replace('%[^a-zA-Z0-9]%', '', $request->get('zip_code'));//$request->get('zip_code', false);
         $dataToUpdate['timing_open']    = $request->get('timing_open', false);
         $dataToUpdate['timing_close']   = $request->get('timing_close', false);
-        $dataToUpdate['phone']          = $request->get('phone', false);
         $dataToUpdate['is_24_7_phone']  = $request->get('is_24_7_phone', false);
+
+        if ( $request->has('phone') )
+        {
+            try
+            {
+                $dataToUpdate['phone'] = phone($request->get('phone'), 'US')->formatE164();
+            }
+            catch (\Exception $e)
+            {
+                $dataToUpdate['phone'] = '';
+            }
+        }
+
 
         $dataToUpdate = array_filter($dataToUpdate, function($a){return false !== $a;});
 
@@ -347,7 +373,7 @@ class HospitalController extends BackendController
             'first_name'        => 'required|string',
             'last_name'         => 'required|string',
             'email'             => 'required|string|email|unique_encrypted:users,email',
-            'phone'             => 'required|string',
+            'phone'             => 'required|string|phone:US,BE',
             'address'           => 'string|nullable',
             'state'             => 'numeric|nullable',
             'city'              => 'numeric|nullable',
@@ -378,6 +404,18 @@ class HospitalController extends BackendController
                 $input['profile_picture'] = $imageName;
             }
 
+        }
+
+        if ( $request->has('phone') )
+        {
+            try
+            {
+                $input['phone'] = phone($request->get('phone'), 'US')->formatE164();
+            }
+            catch (\Exception $e)
+            {
+                $input['phone'] = '';
+            }
         }
 
         foreach (collect(User::getEncryptionFields()) as $field)
@@ -433,7 +471,7 @@ class HospitalController extends BackendController
             'first_name'        => 'required|string',
             'last_name'         => 'required|string',
             'email'             => 'required|string|email|unique_encrypted:users,email,'.$request->id.',id',
-            'phone'             => 'required|string',
+            'phone'             => 'required|string|phone:US,BE',
             'address'           => 'string|nullable',
             'state'             => 'numeric|nullable',
             'city'              => 'numeric|nullable',
@@ -471,6 +509,18 @@ class HospitalController extends BackendController
         if($request->has('password'))
         {
             $dataToUpdate['password']   = bcrypt($request->password);
+        }
+
+        if ( $request->has('phone') )
+        {
+            try
+            {
+                $dataToUpdate['phone'] = phone($request->get('phone'), 'US')->formatE164();
+            }
+            catch (\Exception $e)
+            {
+                $dataToUpdate['phone'] = '';
+            }
         }
 
         foreach (collect(User::getEncryptionFields()) as $field)
