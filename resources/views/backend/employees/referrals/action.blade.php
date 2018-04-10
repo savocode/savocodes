@@ -6,7 +6,7 @@
             <i class="fa fa-check"></i>
         </a>
         <a href="#"  title="Reject" data-toggle="modal" data-target="#rejectModal{{ $record->id }}" class="btn btn-xs btn-danger">
-            <i class="fa fa-trash"></i>
+            <i class="fa fa-times-circle"></i>
         </a>
 
 
