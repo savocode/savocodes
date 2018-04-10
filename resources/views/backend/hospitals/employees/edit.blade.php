@@ -18,7 +18,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>{{ $moduleProperties['longModuleName'] }}
-      <small>Edit {{ str_singular($moduleProperties['shortModuleName']) }}</small>
+      <small>Edit Employee</small>
       </h1>
     </section>
 
