@@ -62,7 +62,7 @@
 
         <div class="box">
             <div class="box-header">
-              <h3 class="box-title">All Hospital Physician</h3>
+              <h3 class="box-title">All Referrals</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
