@@ -87,10 +87,10 @@
                             <label>City</label>
                             {!! Form::select('city', $cities, null, ['class' => 'form-control chosen', 'id' => 'ddl_cities']) !!}
                         </div>
-                          <div class="col-sm-4">
+                          {{-- <div class="col-sm-4">
                               <label>Gender</label>
                               {!! Form::select('gender', $genders, null, ['class' => 'form-control chosen']) !!}
-                          </div>
+                          </div> --}}
                       </div>
                   </form>
               </div>
