@@ -407,7 +407,7 @@ class WebserviceController extends ApiBaseController {
     public function searchHospitalsByZipCode(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'zipcode' => 'required_without:city|min:6|max:9',
+            'zipcode' => 'required_without:city|min:5|max:7',
             'city'    => 'required_without:zipcode',
         ]);
 
