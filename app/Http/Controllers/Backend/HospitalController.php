@@ -215,7 +215,7 @@ class HospitalController extends BackendController
             'phone'         => 'string||phone:US,BE',
             'address'       => 'string|nullable',
             'location'      => 'string|nullable',
-            'zip_code'      => 'required|string',
+            'zip_code'      => 'required|string|min:5|max:7',
             'is_24_7_phone' => 'required|in:1,0',
             'timing_open'   => 'required|string|date_format:H:i',
             'timing_close'  => 'required|string|date_format:H:i|after:timing_open',
