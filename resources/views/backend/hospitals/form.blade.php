@@ -111,7 +111,7 @@
 
 <div class="pull-left">
     {!! Form::submit('Save', ['class' => 'btn btn-primary btn-flat']) !!}
-    <a href="{{ backend_url($moduleProperties['controller']) }}" type="button" class="btn btn-default btn-flat">Cancel</a>
+    <a href="{{ backend_url($moduleProperties['controller'] . '/index') }}" type="button" class="btn btn-default btn-flat">Cancel</a>
 </div>
 
 @section('inlineJS')
