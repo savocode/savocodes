@@ -18,4 +18,10 @@ class Email
     {
         return $subject . (self::$suffixInSubject ? (' - ' . constants('global.site.name')) : '');
     }
+    public static function contactUsEmailShoot($to, $subject, $body, $from,  $attachments=null)
+    {
+        Mail::raw( $body, function($m) use($to, $subject, $attachments, $from) {
+            $m->to($to)->from( $from )->subject( self::makeSubject($subject) );
+        });
+    }
 }

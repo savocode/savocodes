@@ -117,7 +117,7 @@ return [
                 ],
                 'referrals' => [
                     'label' => 'Referrals',
-                    'path' => '/referrals',
+                    'path' => '/referrals/index',
                     'regexPath' => '%(/referrals(/index|/canceled)?)%',
                     'icon' => 'fa fa-user-plus',
                     'submenu' => [

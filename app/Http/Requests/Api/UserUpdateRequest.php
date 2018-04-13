@@ -52,7 +52,8 @@ class UserUpdateRequest extends Request {
             'old_pwd'    => 'required_with:password|different:password',
             'city'       => 'integer',
             'state'      => 'integer',
-            'phone'      => 'phone:US|unique_encrypted:users,phone,'.$user->id.',id',
+          //  'phone'      => 'phone:US|unique_encrypted:users,phone,'.$user->id.',id',
+            'phone'      => 'unique_encrypted:users,phone,'.$user->id.',id',
         ];
 
         return $rules;
@@ -80,7 +81,12 @@ class UserUpdateRequest extends Request {
             ]);
 
         foreach ($encryptFields as $field) {
-            $data[$field] = RijndaelEncryption::decrypt($data[$field]);
+
+            if(array_key_exists($field, $data))
+            {
+                $data[$field] = RijndaelEncryption::decrypt($data[$field]);
+            }
+
         }
 
         $data[';modified;'] = true;

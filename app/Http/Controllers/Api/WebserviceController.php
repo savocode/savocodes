@@ -121,7 +121,7 @@ class WebserviceController extends ApiBaseController {
             $input[$field] = RijndaelEncryption::encrypt($input[$field]);
         }
 
-        info($input);
+       // info($input);
         $user = User::create($input);
         $user = User::find($user->id); // Just because we need complete model attributes for event based activities
 
@@ -297,10 +297,12 @@ class WebserviceController extends ApiBaseController {
         // When user wants to set empty value on particular fields it would work that way.
         // Also, accepts when few items provided while updating
         $dataToUpdate = array_filter([
-            'first_name'           =>  $request->get('first_name', false),
-            'last_name'            =>  $request->get('last_name', false),
-            'email'                =>  $request->get('email', false),
-            'profile_picture'      =>  $request->get('profile_picture', false),
+            'first_name'            =>  $request->get('first_name', false),
+            'last_name'             =>  $request->get('last_name', false),
+            'email'                 =>  $request->get('email', false),
+            'profile_picture'       =>  $request->get('profile_picture', false),
+            'profession_id'         =>  $request->get('profession_id', false),
+            'hospital_id'           =>  $request->get('hospital_id', false),
         ], function($a){return false !== $a;});
 
         if ( $request->has('phone') )
@@ -344,7 +346,11 @@ class WebserviceController extends ApiBaseController {
             if ( Image::open( $path . '/' . $imageName )->scaleResize(200, 200)->save( $path . '/' . $imageName ) )
             {
                 $dataToUpdate['profile_picture'] = $imageName;
-                $oldImageToDelete                = $me->profile_picture;
+
+                if(is_file(public_path( config('constants.front.dir.profilePicPath').$me->profile_picture)))
+                {
+                    $oldImageToDelete                = $me->profile_picture;
+                }
             }
         }
 
@@ -557,22 +563,25 @@ class WebserviceController extends ApiBaseController {
 
         $body = "Hey Admin,
 
-Someone has an enquiry about LifeCare, please find the details:
+                Someone has an enquiry about LifeCare, please find the details:
+                
+                Name: %s
+                Email: %s
+                Phone: %s
+                Reason: %s
+                Location: %s
+                Comments: %s
+                ";
 
-Name: %s
-Email: %s
-Phone: %s
-Reason: %s
-Location: %s
-Comments: %s
-";
         $full_name = $request->get('full_name', '');
         $email     = $request->get('email', '');
         $phone     = $request->get('phone', '');
 
+        $contact_email = Setting::extract('email.contact');
+
         $body = sprintf($body, $full_name, $email, $phone, $request->get('reason'), $request->get('location'), $request->get('content'));
 
-        Email::shoot('no-reply@example.com', 'Contact Us Enquiry', $body);
+        Email::contactUsEmailShoot($contact_email, 'Contact Us Enquiry', $body, $email);
 
         return RESTAPIHelper::response(new \stdClass, true, 'Form submitted successfully.');
     }

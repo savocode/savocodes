@@ -24,10 +24,14 @@ class Setting extends Model
     ];
 
     public static function extract($key, $default=null) {
+        self::resetCache();
+        //@TODO clear the resetCahce when on production
         $settings = self::extractAll();
 
         return array_key_exists( $key, $settings ) ? $settings[$key] : $default;
     }
+
+
 
     public static function extracts($key) {
         $settings = collect(self::extractAll());

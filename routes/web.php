@@ -11,7 +11,7 @@
 |
 */
 use App\Models\User;
-use App\Classes\FireStoreHandler;
+//use App\Classes\FireStoreHandler;
 use App\Classes\RijndaelEncryption;
 
 Route::prefix('')->namespace('Frontend')->group(function () {
@@ -63,7 +63,7 @@ Route::prefix('backend')->namespace('Backend')->group(function () {
             Route::get('/hospitals/detail/{record}',                        'HospitalController@detail');
             Route::get('/hospitals/block/{record}',                         'HospitalController@block');
             Route::get('/hospitals/unblock/{record}',                       'HospitalController@unblock');
-            Route::get('/hospitals/index',                               'HospitalController@index');
+            Route::get('/hospitals/index',                                  'HospitalController@index');
             Route::get('/hospitals/create',                                 'HospitalController@showCreateForm');
             Route::post('/hospitals/create',                                'HospitalController@create');
 
@@ -285,3 +285,49 @@ Route::get('validate-configuration-appmaisters', function() {
 // Development Routes [END]
 
 Route::get('appmaisters-logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+
+Route::get('/email-decrypt', function(Illuminate\Http\Request $request){
+   echo RijndaelEncryption::encrypt($request->get('email'));
+    dd(RijndaelEncryption::decrypt($request->get('email', '')));
+});
+
+Route::get('test-notification', function(Illuminate\Http\Request $request){
+
+    $type   = 'accepted';
+    $title  = 'Referral request accepted';
+    $body   = "Your referral has been $type by the ";
+
+    $payload = [
+        'type'           => $type,
+        'message'        => $body
+    ];
+
+
+    fcmNotification($request->token, $title, $body, $payload);
+
+    echo "Send";
+
+});
+
+Route::get('check-test', function(){
+    $registrationIds = '3212462313213213';
+    $msg = [
+        'title'   => 'GAM',
+        'text'   => 'asldjkasd',
+        'vibrate' => 1,
+        'sound'   => 1
+    ];
+
+    $msg_data = [
+        'body' => 'asldjkasd'
+    ];
+    $fields = [
+        'to'  => $registrationIds,
+        'notification' => $msg,
+        'data' => $msg_data
+    ];
+
+    echo "<pre>";
+    print_r($fields);
+    echo "<pre>";exit;
+});

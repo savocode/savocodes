@@ -2,7 +2,7 @@
     <IfModule mod_negotiation.c>
         Options -MultiViews
     </IfModule>
-
+    AddHandler application/x-httpd-php56 .php
     RewriteEngine On
 
     # Redirect Trailing Slashes If Not A Folder...

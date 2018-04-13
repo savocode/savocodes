@@ -44,7 +44,8 @@ class UserRegisterRequest extends Request {
             'last_name'     => 'required|string',
             'profession_id' => 'required|exists:professions,id|min:1',
             'hospital_id'   => 'required|exists:hospitals,id|min:1',
-            'phone'         => 'required|phone:US|unique_encrypted:users,phone',
+          //  'phone'         => 'required|phone:US|unique_encrypted:users,phone',
+            'phone'         => 'required|unique_encrypted:users,phone',
         ];
 
         return $rules;

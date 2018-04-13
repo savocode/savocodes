@@ -52,26 +52,36 @@ function distanceText($distance)
 
 function fcmNotification($token, $title=null, $body=null, $payload=array())
 {
-    if ( null === env('FCM_SERVER_KEY') ) {
+    if ( null === env('FCM_SERVER_KEY') )
+    {
         throw new Exception('FCM_SERVER_KEY is not set in environment file.');
     }
 
-    $fields = array_merge($payload, [
-        'to' => $token,
-        'notification' => ($title || $body) ? [
-            'title' => $title,
-            'body' => $body,
-        ] : null
-    ]);
+    $data = ['title' => $title, 'body' => $body];
 
-    $headers = [
-        'Authorization: key=' . env('FCM_SERVER_KEY'),
-        'Content-Type: application/json'
-    ];
+    $device = App\Models\UserDevice::where('device_token', $token)->first();
 
+    if (!$device)
+    {
+        return false;
+    }
+
+    if ($device->device_type == 'android')
+  //  if (true)
+    {
+        $fields = ['data' => array_merge($data, $payload)];
+    }
+    else
+    {
+        $data['sound'] = 'default';
+        $fields        = ['notification' => array_merge($data, $payload)];
+    }
+
+    $fields  = array_merge(['to' => $token,], $fields);
 //    echo "<pre>";
 //    print_r($fields);
-//    echo "<pre>";exit;
+//    echo "<pre>";
+    $headers = ['Authorization: key=' . env('FCM_SERVER_KEY'),'Content-Type: application/json'];
 
     $ch = curl_init();
     curl_setopt( $ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send' );
@@ -83,6 +93,7 @@ function fcmNotification($token, $title=null, $body=null, $payload=array())
     $result = curl_exec( $ch );
     curl_close( $ch );
 
+    info('result:'. $result);
     return $result;
 }
 
