@@ -269,6 +269,7 @@ class WebserviceController extends ApiBaseController {
 
         $token = JWTAuth::fromUser($userData);
 
+       // $userData->removeDevice();
         // Add user device
         $userData->addDevice( $request->get('device_token', ''), $request->get('device_type', null), $token );
 

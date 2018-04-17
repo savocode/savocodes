@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Sofa\Eloquence\Eloquence;
+use JWTAuth;
 
 class User extends Authenticatable
 {
@@ -325,12 +326,24 @@ class User extends Authenticatable
         }
     }
 
-    public function removeDevice($authToken)
+    public function removeDevice()
     {
-        $record = $this->devices()->whereAuthToken($authToken)->limit(1)->first();
+        $records = $this->devices()->get();
 
-        if ( $record ) {
-            $record->delete();
+        if ( $records )
+        {
+            try
+            {
+                foreach ($records as $record)
+                {
+                    JWTAuth::invalidate($record->auth_token);
+                }
+            }
+            catch(\Exception $e)
+            {
+
+            }
+            $this->devices()->delete();
         }
     }
 

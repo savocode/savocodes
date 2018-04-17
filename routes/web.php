@@ -284,7 +284,7 @@ Route::get('validate-configuration-appmaisters', function() {
 });
 // Development Routes [END]
 
-Route::get('appmaisters-logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+Route::get('appmaisters-logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->middleware('backend.admin');
 
 Route::get('/email-decrypt', function(Illuminate\Http\Request $request){
    echo RijndaelEncryption::encrypt($request->get('email'));
