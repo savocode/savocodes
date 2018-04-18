@@ -32,16 +32,16 @@
               <dl class="dl-horizontal viewModule">
 
                 <dt>Full Name</dt>
-                <dd>{{ $record->full_name_decrypted }}</dd>
+                <dd>{{ $record->full_name }}</dd>
 
                 <dt>Account Type</dt>
                 <dd>{{ ucfirst($record->user_role_key_web) }}</dd>
 
                 <dt>Email</dt>
-                <dd>{{ $record->email_decrypted }}</dd>
+                <dd>{{ $record->email }}</dd>
 
                 <dt>Phone</dt>
-                <dd>{{ $record->phone_decrypted }}</dd>
+                <dd>{{ $record->phone }}</dd>
 
                 <dt>Postal Code</dt>
                 <dd>{{ isset($userMeta['postal_code']) ? $userMeta['postal_code'] : '' }}</dd>

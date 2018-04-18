@@ -45,7 +45,7 @@ class UserActivationEmail extends Notification
         $temp = $this->is_active == true?'Activate':'Deactivate';
         $mailMessage = (new MailMessage)
             ->subject( Email::makeSubject('User '. $temp) )
-            ->greeting($this->user->full_name_decrypted);
+            ->greeting($this->user->full_name);
 
         if($this->is_active)
         {

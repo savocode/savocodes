@@ -145,7 +145,7 @@
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="{{ public_url(user()->profile_picture_path) }}" class="user-image" alt="User Image">
-              <span class="hidden-xs">{{ user()->full_name_decrypted }}</span>
+              <span class="hidden-xs">{{ user()->full_name }}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
@@ -153,7 +153,7 @@
                 <img src="{{ public_url(user()->profile_picture_path) }}" class="img-circle" alt="User Image">
 
                 <p>
-                  {{ user()->full_name_decrypted }}
+                  {{ user()->full_name }}
                   <small>({{ ucfirst(user()->user_role_key) }})</small>
                 </p>
               </li>

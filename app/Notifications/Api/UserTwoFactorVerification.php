@@ -50,7 +50,7 @@ class UserTwoFactorVerification extends Notification
     {
         $mailMessage = (new MailMessage)
             ->subject( Email::makeSubject('TwoFactor Verification') )
-            ->greeting($this->user->full_name_decrypted)
+            ->greeting($this->user->full_name)
             ->line('Please use this following code to login into the application.')
             ->line('Code: ' . $this->user->{'2fa'} );
 

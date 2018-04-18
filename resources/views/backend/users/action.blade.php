@@ -2,6 +2,10 @@
                             <i class="fa fa-info-circle"></i>
                         </a>
 
+                        <a href="{{ backend_url($moduleProperties['controller'].'/edit/'.$record->id) }}" title="Edit" class="btn btn-xs btn-primary">
+                            <i class="fa fa-pencil"></i>
+                        </a>
+
                         @if ($record->is_active == 1)
                             <a href="{{ backend_url($moduleProperties['controller'].'/block/'.$record->id) }}" title="Block" class="btn btn-xs btn-primary block">
                                 <i class="fa fa-ban"></i>

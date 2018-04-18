@@ -5,7 +5,7 @@
               <img src="{{ public_url( user()->profile_picture_path ) }}" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
-              <p>{{ user()->full_name_decrypted }}</p>
+              <p>{{ user()->full_name }}</p>
               <a  style="display: none;" href="{{ url('/') }}" target="_blank">(View front website)</a>
             </div>
           </div>

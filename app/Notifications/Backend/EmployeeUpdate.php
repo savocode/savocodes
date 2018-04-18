@@ -42,16 +42,19 @@ class EmployeeUpdate extends Notification
     {
         $mailMessage = (new MailMessage)
             ->subject( Email::makeSubject('Employee Updated') )
-            ->greeting($this->user->full_name_decrypted)
+            ->greeting($this->user->full_name)
             ->line('Your account  has been updated by the '.constants('global.site.name'). ' admin');
         if($this->is_password)
         {
             $mailMessage->line('Admin also update your password and emailed you');
         }
 
-         $mailMessage->line("Click on the button to go to admin panel")
-            ->action(constants('global.site.name').' Employee Panel', url('backend/login') )
-            ->line("Please login and check every things works fine");
+        if($this->user->role_id == 2)
+        {
+            $mailMessage->line("Click on the button to go to admin panel")
+                ->action(constants('global.site.name').' Employee Panel', url('backend/login') );
+        }
+        $mailMessage->line("Please login and check every things works fine");
 
         return $mailMessage;
     }

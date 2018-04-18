@@ -99,13 +99,13 @@ class EmployeeController extends BackendController
                 $query->latest();
             })
             ->editColumn('first_name', function ($user) {
-                return $user->first_name_decrypted;
+                return $user->first_name;
             })
             ->editColumn('last_name', function ($user) {
-                return $user->last_name_decrypted;
+                return $user->last_name;
             })
             ->editColumn('email', function ($user) {
-                return $user->email_decrypted;
+                return $user->email;
             })
             ->editColumn('active', function ($user) {
                 return $user->status_text_formatted;
@@ -146,7 +146,6 @@ class EmployeeController extends BackendController
         $hospital       = user()->hospital()->first();
 
         return backend_view($this->thisModule['viewReferralDir'] . '.index', compact('hospital', 'diagnosis', 'age', 'status'));
-
     }
 
     public function referralsData(Datatables $datatables, Request $request)
@@ -176,7 +175,7 @@ class EmployeeController extends BackendController
                 $query->latest();
             })
             ->editColumn('referred_by', function ($referral) {
-                return $referral->doctor->full_name_decrypted;
+                return $referral->doctor->full_name;
             })
             ->editColumn('first_name', function ($referral) {
                 return $referral->first_name_decrypted;

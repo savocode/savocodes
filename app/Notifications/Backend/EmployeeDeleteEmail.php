@@ -44,7 +44,7 @@ class EmployeeDeleteEmail extends Notification
     {
         $mailMessage = (new MailMessage)
             ->subject( Email::makeSubject('User Deleted') )
-            ->greeting($this->user->full_name_decrypted)
+            ->greeting($this->user->full_name)
             ->line('Your account has been deleted by the '.constants('global.site.name'). ' admin');
 
         return $mailMessage;

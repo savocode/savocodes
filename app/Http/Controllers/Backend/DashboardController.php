@@ -62,11 +62,7 @@ class DashboardController extends BackendController
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-       // $postData = $request->except('password');
-
-        $postData['first_name'] = RijndaelEncryption::encrypt($request->first_name);
-        $postData['last_name']  = RijndaelEncryption::encrypt($request->last_name);
-        $postData['email']      = RijndaelEncryption::encrypt($request->email);
+        $postData = $request->except('password');
 
         // Filter out remove images if selected and configured in access modifiers
         foreach (['profile_picture'] as $field)

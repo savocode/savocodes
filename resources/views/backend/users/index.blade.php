@@ -109,12 +109,12 @@
                 <thead>
                 <tr>
                   <th width="80">Picture</th>
-                  <th>First Name</th>
+                  <th width="100">First Name</th>
                   <th>Last Name</th>
                   <th>Email</th>
-                  <th>Profession</th>
+                  <th width="50">Profession</th>
                   <th width="130">Date Registered</th>
-                  <th width="50">Status</th>
+                  <th width="40">Status</th>
                   <th width="120">Action</th>
                 </tr>
                 </thead>

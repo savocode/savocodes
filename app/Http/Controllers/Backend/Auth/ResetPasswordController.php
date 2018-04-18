@@ -60,11 +60,6 @@ class ResetPasswordController extends Controller
     {
         $this->validate($request, $this->rules(), $this->validationErrorMessages());
 
-        //Encrypting the email of the user
-        $email          = RijndaelEncryption::encrypt($request->get('email', ''));
-
-        $request->merge(['email' => $email]);
-
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
@@ -86,8 +81,6 @@ class ResetPasswordController extends Controller
 
     protected function sendResetFailedResponse(Request $request, $response)
     {
-        $request->merge(['email' => RijndaelEncryption::decrypt($request->get('email', ''))]);
-
         return redirect()->back()
             ->withInput($request->only('email'))
             ->withErrors(['email' => trans($response)]);

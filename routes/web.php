@@ -58,6 +58,8 @@ Route::prefix('backend')->namespace('Backend')->group(function () {
             Route::post('/users/{record}',                                  'UserController@handleVerification');
             Route::get('/users/{index?}',                                   'UserController@index');
             Route::delete('/users/{record}',                                'UserController@destroy');
+            Route::get('/users/edit/{record}',                              'UserController@showEditForm');
+            Route::put('/users/edit/{record}',                              'UserController@update');
 
             Route::get('/hospitals/data',                                   'HospitalController@data');
             Route::get('/hospitals/detail/{record}',                        'HospitalController@detail');

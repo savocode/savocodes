@@ -42,14 +42,17 @@ class EmployeePasswordChanged extends Notification
     {
         $mailMessage = (new MailMessage)
             ->subject( Email::makeSubject('Password Updated') )
-            ->greeting($this->user->full_name_decrypted)
+            ->greeting($this->user->full_name)
             ->line('Your account password has been updated by the '.constants('global.site.name'). ' admin')
             ->line('Below is your new credentials')
-            ->line("Email: ".$this->user->email_decrypted)
-            ->line("Password: ".$this->password)
-            ->line("Click on the button to go to admin panel")
-            ->action(constants('global.site.name').' Employee Panel', url('backend/login') )
-            ->line("Please login and check every things works fine");
+            ->line("Email: ".$this->user->email)
+            ->line("Password: ".$this->password);
+        if($this->user->role_id == 2)
+        {
+            $mailMessage->line("Click on the button to go to admin panel")
+                        ->action(constants('global.site.name').' Employee Panel', url('backend/login') );
+        }
+        $mailMessage->line("Please login and check every things works fine");
 
         return $mailMessage;
     }

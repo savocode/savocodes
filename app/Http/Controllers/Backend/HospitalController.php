@@ -27,6 +27,7 @@ use DB;
 use Illuminate\Http\Request;
 use League\Flysystem\Exception;
 use View;
+use File;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\Validator;
 
@@ -325,13 +326,13 @@ class HospitalController extends BackendController
             ->orderColumn('created_at', 'created_at $1')
 
             ->editColumn('first_name', function ($user) {
-                return $user->first_name_decrypted;
+                return $user->first_name;
             })
             ->editColumn('last_name', function ($user) {
-                return $user->last_name_decrypted;
+                return $user->last_name;
             })
             ->editColumn('email', function ($user) {
-                return $user->email_decrypted;
+                return $user->email;
             })
             ->editColumn('active', function ($user) {
                 return $user->status_text_formatted;
@@ -396,7 +397,9 @@ class HospitalController extends BackendController
         if($request->hasFile('profile_picture'))
         {
             $imageName  = \Illuminate\Support\Str::random(12) . '.' . $request->file('profile_picture')->getClientOriginalExtension();
+
             $path       = public_path( config('constants.front.dir.profilePicPath') );
+
             $request->file('profile_picture')->move($path, $imageName);
 
             if ( Image::open( $path . '/' . $imageName )->scaleResize(200, 200)->save( $path . '/' . $imageName ) )
@@ -416,11 +419,6 @@ class HospitalController extends BackendController
             {
                 $input['phone'] = '';
             }
-        }
-
-        foreach (collect(User::getEncryptionFields()) as $field)
-        {
-            $input[$field] = RijndaelEncryption::encrypt($input[$field]);
         }
 
         $user = new User($input);
@@ -470,8 +468,8 @@ class HospitalController extends BackendController
         $validator = Validator::make($request->all(), [
             'first_name'        => 'required|string',
             'last_name'         => 'required|string',
-            'email'             => 'required|string|email|unique_encrypted:users,email,'.$request->id.',id',
-            'phone'             => 'required|string|phone:US,BE',
+            'email'             => 'required|string|email|unique:users,email,'.$request->id.',id',
+            'phone'             => 'required|string|phone:US,BE|unique:users,phone,'.$request->id.',id',
             'address'           => 'string|nullable',
             'state'             => 'numeric|nullable',
             'city'              => 'numeric|nullable',
@@ -496,7 +494,9 @@ class HospitalController extends BackendController
         if ( $request->hasFile('profile_picture') )
         {
             $imageName  = $user->id . '-' . str_random(12) . '.' . $request->file('profile_picture')->getClientOriginalExtension();
+
             $path       = public_path( config('constants.front.dir.profilePicPath') );
+
             $request->file('profile_picture')->move($path, $imageName);
 
             if ( Image::open( $path . '/' . $imageName )->scaleResize(200, 200)->save( $path . '/' . $imageName ) )
@@ -523,19 +523,12 @@ class HospitalController extends BackendController
             }
         }
 
-        foreach (collect(User::getEncryptionFields()) as $field)
-        {
-            if(array_key_exists($field, $dataToUpdate))
-            {
-                $dataToUpdate[$field] = RijndaelEncryption::encrypt($dataToUpdate[$field]);
-            }
-        }
-
         $user->update($dataToUpdate);
 
-        if ( isset($oldImageToDelete) && !empty($oldImageToDelete) )
+
+        if ( isset($oldImageToDelete) )
         {
-            unlink($path . '/' . $oldImageToDelete);
+            File::delete($path . '' . $oldImageToDelete);
         }
 
         if ( array_key_exists('password', $dataToUpdate) )

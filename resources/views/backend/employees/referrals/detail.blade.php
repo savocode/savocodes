@@ -32,7 +32,7 @@
               <dl class="dl-horizontal viewModule">
 
                 <dt>Referred By</dt>
-                <dd>{{ $record->doctor->full_name_decrypted }}</dd>
+                <dd>{{ $record->doctor->full_name }}</dd>
 
                 <dt>Patient Name</dt>
                 <dd>{{ $record->full_name_decrypted }}</dd>

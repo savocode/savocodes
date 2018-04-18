@@ -116,16 +116,20 @@ class User extends Authenticatable
      */
     public function sendPasswordResetNotification($token)
     {
-        if ( $this->isBackendUser() ) {
+        if ( $this->isBackendUser() )
+        {
             $this->notify(new BackendResetPasswordNotification($token));
-        } else {
+        }
+        else
+        {
             $this->notify(new FrontendResetPasswordNotification($token));
         }
     }
 
     public static function extractUserId($user)
     {
-        if ( $user instanceof User ) {
+        if ( $user instanceof User )
+        {
             return $user->id;
         }
 
@@ -152,13 +156,20 @@ class User extends Authenticatable
 
     public function validateUserActiveCriteria()
     {
-        if ( $this->attributes['email_verification'] != '1' ) {
+        if ( $this->attributes['email_verification'] != '1' )
+        {
             throw new \App\Exceptions\UserNotAllowedToLogin('Please verify your email first.', 'action_verify_email');
-        } else if ( $this->attributes['sms_verification'] != '1' ) {
+        }
+        else if ( $this->attributes['sms_verification'] != '1' )
+        {
             throw new \App\Exceptions\UserNotAllowedToLogin('Please verify your sms first.', 'action_verify_number');
-        } else if ( $this->attributes['is_active'] != '1' ) {
+        }
+        else if ( $this->attributes['is_active'] != '1' )
+        {
             throw new \App\Exceptions\UserNotAllowedToLogin('Your account is not in active state.', 'inactive_account');
-        } else if ( !$this->isApiUser() ) {
+        }
+        else if ( !$this->isApiUser() )
+        {
             throw new \App\Exceptions\UserNotAllowedToLogin('Invalid credentials, please try-again.', 'invalid_credentials');
         }
 
@@ -213,10 +224,10 @@ class User extends Authenticatable
         return (array) self::$encryptedFields;
     }
 
-    public function routeNotificationForMail()
-    {
-        return RijndaelEncryption::decrypt($this->email);
-    }
+//    public function routeNotificationForMail()
+//    {
+//        return RijndaelEncryption::decrypt($this->email);
+//    }
 
     public function activate()
     {

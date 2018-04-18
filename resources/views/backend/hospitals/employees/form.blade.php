@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-sm-6 form-group{{ $errors->has('first_name') ? ' has-error' : '' }}">
         {!! Form::label('first_name', 'First Name') !!}
-        {!! Form::text('first_name', isset($employee->first_name)?$employee->first_name_decrypted:old('first_name'), ['class' => 'form-control']) !!}
+        {!! Form::text('first_name', isset($employee->first_name)?$employee->first_name:old('first_name'), ['class' => 'form-control']) !!}
         @if ($errors->has('first_name'))
             <span class="help-block">
                 <strong>{{ $errors->first('first_name') }}</strong>
@@ -11,7 +11,7 @@
     
     <div class="col-sm-6 form-group{{ $errors->has('last_name') ? ' has-error' : '' }}">
         {!! Form::label('last_name', 'Last Name') !!}
-        {!! Form::text('last_name', isset($employee->last_name)?$employee->last_name_decrypted:old('last_name'), ['class' => 'form-control']) !!}
+        {!! Form::text('last_name', isset($employee->last_name)?$employee->last_name:old('last_name'), ['class' => 'form-control']) !!}
         @if ($errors->has('last_name'))
             <span class="help-block">
                 <strong>{{ $errors->first('last_name') }}</strong>
@@ -23,7 +23,7 @@
 <div class="row">
     <div class="col-sm-{{ isset($employee)?'6':'12' }} form-group{{ $errors->has('email') ? ' has-error' : '' }}">
         {!! Form::label('email', 'Email') !!}
-        {!! Form::email('email', isset($employee->email)?$employee->email_decrypted:old('email'), ['class' => 'form-control']) !!}
+        {!! Form::email('email', isset($employee->email)?$employee->email:old('email'), ['class' => 'form-control']) !!}
         @if ($errors->has('email'))
             <span class="help-block">
                 <strong>{{ $errors->first('email') }}</strong>
@@ -49,7 +49,7 @@
 <div class="row">
     <div class="col-sm-6 form-group{{ $errors->has('phone') ? ' has-error' : '' }}">
         {!! Form::label('phone', 'Phone (e.g : +14155552671)') !!}
-        {!! Form::text('phone', isset($employee->phone)?$employee->phone_decrypted:old('phone'), ['class' => 'form-control', 'placeholder'=>'+14155552671']) !!}
+        {!! Form::text('phone', isset($employee->phone)?$employee->phone:old('phone'), ['class' => 'form-control', 'placeholder'=>'+14155552671']) !!}
         @if ($errors->has('phone'))
             <span class="help-block">
                 <strong>{{ $errors->first('phone') }}</strong>
@@ -103,10 +103,7 @@
         </div>
         <div class="col-md-6">
         @if ( isset($employee) && is_file('frontend/images/profile/'.$employee->profile_picture) )
-            {!! '<a href="'.frontend_asset('images/profile/' . $employee->profile_picture).'" class="cboxImages">' . Html::image('frontend/images/profile/' . $employee->profile_picture, null, ['class' => 'img-responsive pad']) . '</a>' !!}
-            <div class="pad">
-                <label class="label-control">{!! Form::checkbox('remove_profile_picture') !!} Remove current picture? (if set)</label>
-            </div>
+            {!! '<a href="'.asset('frontend/images/profile/' . $employee->profile_picture).'" class="cboxImages">' . Html::image('frontend/images/profile/' . $employee->profile_picture, null, ['class' => 'img-responsive pad']) . '</a>' !!}
         @endif
         </div>
     </div>

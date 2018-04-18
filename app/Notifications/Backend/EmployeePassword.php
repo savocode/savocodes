@@ -49,9 +49,9 @@ class EmployeePassword extends Notification
     {
         $mailMessage = (new MailMessage)
             ->subject( Email::makeSubject('Account Credentials') )
-            ->greeting($this->user->full_name_decrypted)
+            ->greeting($this->user->full_name)
             ->line('Congratulations! Your account as the admin of the hospital '.$this->hospital->title.' has been created below are your credentials')
-            ->line("Email: ".$this->user->email_decrypted)
+            ->line("Email: ".$this->user->email)
             ->line("Password: ".$this->password)
             ->line("Click on the button to go to admin panel")
             ->action(constants('global.site.name').' Employee Panel', url('backend/login') )

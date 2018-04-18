@@ -100,9 +100,6 @@ class WebserviceController extends ApiBaseController {
             }
         }
 
-        // So split name is not required here.
-        // list($input['first_name'], $input['last_name']) = str_split_name($input['full_name']);
-
         if ( $request->hasFile('profile_picture') )
         {
             $imageName  = \Illuminate\Support\Str::random(12) . '.' . $request->file('profile_picture')->getClientOriginalExtension();
@@ -115,13 +112,6 @@ class WebserviceController extends ApiBaseController {
             }
         }
 
-        // Re-Encrypt Value
-        foreach (collect(User::getEncryptionFields()) as $field)
-        {
-            $input[$field] = RijndaelEncryption::encrypt($input[$field]);
-        }
-
-       // info($input);
         $user = User::create($input);
         $user = User::find($user->id); // Just because we need complete model attributes for event based activities
 
@@ -133,11 +123,16 @@ class WebserviceController extends ApiBaseController {
         // Fire user registration event
         event(new JWTUserRegistration($user));
 
-        if ( $user->email_verification != 1 ) {
+        if ( $user->email_verification != 1 )
+        {
             return RESTAPIHelper::response(new \stdClass, true, 'Your account has been registered and email address requires verification. A verification code is sent to your email. Please also check Junk/Spam folder as well.');
-        } else if ( $user->is_active != 1 ) {
+        }
+        else if( $user->is_active != 1 )
+        {
             return RESTAPIHelper::response(new \stdClass, true, 'Your account has been registered and requires admin approval. We will notify you once admin approves your account.');
-        } else {
+        }
+        else
+        {
             return $this->login($request);
         }
     }
@@ -161,18 +156,20 @@ class WebserviceController extends ApiBaseController {
         // Allow only following role
         $input['role_id'] = User::ROLE_PHYSICIANS;
 
-        if (!$token = JWTAuth::attempt($input)) {
+        if (!$token = JWTAuth::attempt($input))
+        {
             return RESTAPIHelper::response('Invalid credentials, please try-again.', false);
         }
 
         $userData = JWTAuth::toUser($token);
 
-        // LOW | TODO: Check from constants if enable single device login
-
         /* Do your additional/manual validation here like email verification or enable/disable */
-        try {
+        try
+        {
             $userData->validateUserActiveCriteria();
-        } catch (\App\Exceptions\UserNotAllowedToLogin $e) {
+        }
+        catch (\App\Exceptions\UserNotAllowedToLogin $e)
+        {
             return RESTAPIHelper::response($e->getMessage(), false, $e->getResolvedErrorCode());
         }
 
@@ -183,27 +180,16 @@ class WebserviceController extends ApiBaseController {
 
         return RESTAPIHelper::response(new \stdClass, true, 'Please enter 6 digit code which we\'ve sent in to your email.');
 
-        /*if ( constants('api.config.allowSingleDeviceLogin') ) {
-            $userData->removeDevice( $token );
-        }
-
-        // Add user device
-        $userData->addDevice( $request->get('device_token', ''), $request->get('device_type', null), $token );
-
-        // Generate user response
-        $result = $this->generateUserProfileResponse( $userData, $token );
-
-        event(new JWTUserLogin($userData));
-
-        return RESTAPIHelper::response( $result );*/
     }
 
     public function logout(Request $request)
     {
-        try {
+        try
+        {
             $me = $this->getUserInstance();
 
-            if ( $me ) {
+            if ( $me )
+            {
                 $me->removeDevice( $this->extractToken() );
 
                 // Fire user logout event
@@ -214,15 +200,21 @@ class WebserviceController extends ApiBaseController {
 
             JWTAuth::invalidate( $this->extractToken() );
 
-        } catch (Exception $e) {}
+        }
+        catch (Exception $e)
+        {
+
+        }
 
         return RESTAPIHelper::emptyResponse();
     }
 
-    public function resetPassword(Request $request) {
+    public function resetPassword(Request $request)
+    {
         $response = \Password::broker()->sendResetLink($request->only('email'));
 
-        switch ($response) {
+        switch ($response)
+        {
             case \Password::INVALID_USER:
                 return RESTAPIHelper::response('Email not found in the system.', false, 'invalid_email');
                 break;
@@ -255,7 +247,8 @@ class WebserviceController extends ApiBaseController {
             'code'  => 'required|string|size:6',
         ]);
 
-        if ($validator->fails()) {
+        if ($validator->fails())
+        {
             return RESTAPIHelper::response(array_flatten($validator->messages()->toArray()), false, 'validation_error');
         }
 
@@ -269,7 +262,7 @@ class WebserviceController extends ApiBaseController {
 
         $token = JWTAuth::fromUser($userData);
 
-       // $userData->removeDevice();
+        $userData->removeDevice();
         // Add user device
         $userData->addDevice( $request->get('device_token', ''), $request->get('device_type', null), $token );
 
@@ -320,7 +313,6 @@ class WebserviceController extends ApiBaseController {
 
         if ( $request->has('password') && $request->get('password', '') !== '' )
         {
-
             // Validate old password first
             $oldPasswordValidation = Auth::validate(['email'=> $me->email,'password' => $request->get('old_pwd')]);
 
@@ -341,7 +333,9 @@ class WebserviceController extends ApiBaseController {
             }
 
             $imageName = $me->id . '-' . str_random(12) . '.' . $request->file('profile_picture')->getClientOriginalExtension();
+
             $path = public_path( config('constants.front.dir.profilePicPath') );
+
             $request->file('profile_picture')->move($path, $imageName);
 
             if ( Image::open( $path . '/' . $imageName )->scaleResize(200, 200)->save( $path . '/' . $imageName ) )
@@ -360,13 +354,13 @@ class WebserviceController extends ApiBaseController {
             return RESTAPIHelper::response('Nothing to update', false);
         }
 
-        foreach (collect(User::getEncryptionFields()) as $field)
-        {
-            if(array_key_exists($field, $dataToUpdate))
-            {
-                $dataToUpdate[$field] = RijndaelEncryption::encrypt($dataToUpdate[$field]);
-            }
-        }
+//        foreach (collect(User::getEncryptionFields()) as $field)
+//        {
+//            if(array_key_exists($field, $dataToUpdate))
+//            {
+//                $dataToUpdate[$field] = RijndaelEncryption::encrypt($dataToUpdate[$field]);
+//            }
+//        }
 
         $me->update( $dataToUpdate );
 
@@ -491,7 +485,7 @@ class WebserviceController extends ApiBaseController {
             'age'         => 'required',
             'phone'       => 'required',
             'diagnosis'   => 'required',
-            'hospital_id' => 'required',
+            'hospital_id' => 'required|exists:hospitals,id|min:1',
         ]);
 
         if ($validator->fails())
@@ -542,12 +536,12 @@ class WebserviceController extends ApiBaseController {
 
     public function saveContactUs(Request $request)
     {
-        $requestData              = [];
-        $requestData['email']     = RijndaelEncryption::decrypt($request->get('email', ''));
-        $requestData['full_name'] = RijndaelEncryption::decrypt($request->get('full_name', ''));
-        $requestData['phone']     = RijndaelEncryption::decrypt($request->get('phone', ''));
-
-        $request->merge($requestData);
+//        $requestData              = [];
+//        $requestData['email']     = RijndaelEncryption::decrypt($request->get('email', ''));
+//        $requestData['full_name'] = RijndaelEncryption::decrypt($request->get('full_name', ''));
+//        $requestData['phone']     = RijndaelEncryption::decrypt($request->get('phone', ''));
+//
+//        $request->merge($requestData);
 
         $validator = Validator::make($request->all(), [
             'full_name' => 'required',

@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-sm-6 form-group{{ $errors->has('first_name') ? ' has-error' : '' }}">
         {!! Form::label('first_name', 'First Name') !!}
-        {!! Form::text('first_name', isset(user()->first_name_decrypted)?user()->first_name_decrypted:old('first_name'), ['class' => 'form-control']) !!}
+        {!! Form::text('first_name', isset(user()->first_name)?user()->first_name:old('first_name'), ['class' => 'form-control']) !!}
         @if ($errors->has('first_name'))
             <span class="help-block">
                 <strong>{{ $errors->first('first_name') }}</strong>
@@ -11,7 +11,7 @@
 
     <div class="col-sm-6 form-group{{ $errors->has('last_name') ? ' has-error' : '' }}">
         {!! Form::label('last_name', 'Last Name') !!}
-        {!! Form::text('last_name', isset(user()->last_name_decrypted)?user()->last_name_decrypted:old('last_name'), ['class' => 'form-control']) !!}
+        {!! Form::text('last_name', isset(user()->last_name)?user()->last_name:old('last_name'), ['class' => 'form-control']) !!}
         @if ($errors->has('last_name'))
             <span class="help-block">
                 <strong>{{ $errors->first('last_name') }}</strong>
@@ -23,7 +23,7 @@
 <div class="row">
     <div class="col-sm-6 form-group{{ $errors->has('email') ? ' has-error' : '' }}">
         {!! Form::label('email', 'Email') !!}
-        {!! Form::text('email', isset(user()->email_decrypted)?user()->email_decrypted:old('email'), ['class' => 'form-control']) !!}
+        {!! Form::text('email', isset(user()->email)?user()->email:old('email'), ['class' => 'form-control']) !!}
         @if ($errors->has('email'))
             <span class="help-block">
                 <strong>{{ $errors->first('email') }}</strong>

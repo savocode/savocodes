@@ -65,33 +65,33 @@ class UserUpdateRequest extends Request {
 
         // This step is to avoid repetition, when $request->all() is being called from controller
         // Need to find alternate way of merging data.
-        if ( array_key_exists(';modified;', $data) ) {
-            return $data;
-        }
-
-        if ( array_key_exists('phone', $data) ) {
-            // First decrypt the phone
-            $data['phone'] = RijndaelEncryption::decrypt($data['phone']);
-            $data['phone'] = sprintf('+1%s', ltrim($data['phone'], '+1'));
-        }
-
-        $encryptFields = collect(User::getEncryptionFields())
-            ->exclude([
-                'phone'
-            ]);
-
-        foreach ($encryptFields as $field) {
-
-            if(array_key_exists($field, $data))
-            {
-                $data[$field] = RijndaelEncryption::decrypt($data[$field]);
-            }
-
-        }
-
-        $data[';modified;'] = true;
-
-        $this->merge($data); // This is required since without merging, it doesn't pass modified value to controller.
+//        if ( array_key_exists(';modified;', $data) ) {
+//            return $data;
+//        }
+//
+//        if ( array_key_exists('phone', $data) ) {
+//            // First decrypt the phone
+//            $data['phone'] = RijndaelEncryption::decrypt($data['phone']);
+//            $data['phone'] = sprintf('+1%s', ltrim($data['phone'], '+1'));
+//        }
+//
+//        $encryptFields = collect(User::getEncryptionFields())
+//            ->exclude([
+//                'phone'
+//            ]);
+//
+//        foreach ($encryptFields as $field) {
+//
+//            if(array_key_exists($field, $data))
+//            {
+//                $data[$field] = RijndaelEncryption::decrypt($data[$field]);
+//            }
+//
+//        }
+//
+//        $data[';modified;'] = true;
+//
+//        $this->merge($data); // This is required since without merging, it doesn't pass modified value to controller.
 
         return $data;
     }

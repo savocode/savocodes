@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Backend;
 
 use App\Notifications\Backend\UserActivationEmail;
 use App\Notifications\Backend\EmployeeDeleteEmail;
+use App\Events\UserPasswordChanged;
+use App\Events\EmployeeUpdate;
 
 use App\Models\City;
 use App\Models\Country;
@@ -20,6 +22,8 @@ use DB;
 use Illuminate\Http\Request;
 use View;
 use Yajra\Datatables\Datatables;
+use Gregwar\Image\Image;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends BackendController
 {
@@ -142,13 +146,13 @@ class UserController extends BackendController
             ->orderColumn('created_at', 'created_at $1')
 
             ->editColumn('first_name', function ($user) {
-                return $user->first_name_decrypted;
+                return $user->first_name;
             })
             ->editColumn('last_name', function ($user) {
-                return $user->last_name_decrypted;
+                return $user->last_name;
             })
             ->editColumn('email', function ($user) {
-                return $user->email_decrypted;
+                return $user->email;
             })
             ->editColumn('active', function ($user) {
                 return $user->status_text_formatted;
@@ -178,13 +182,103 @@ class UserController extends BackendController
         return backend_view($this->thisModule['viewDir'] . '.detail', compact('record', 'userMeta'));
     }
 
+    public function showEditForm(User $record)
+    {
+        if(!$record)
+        {
+            session()->flash('alert-danger', 'Error! No Record Found');
+            return redirect()->back();
+        }
+
+        $states         = State::listStates(Country::DEFAULT_COUNTRY_ID)->toArray();
+        $state_id       = isset($record->state)?$record->state:key($states);
+        $states         = ['' => 'Select State'] + $states;
+        $cities         = ['' => 'Select City'] + City::listCities($state_id)->toArray();
+      //  $genders        = ['' => 'Select Gender', 'Male' => 'Male', 'Female' => 'Female'];
+
+        return backend_view($this->thisModule['viewDir'].'.edit', compact('record', 'states', 'cities'));
+    }
+
+    public function update(User $record, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'first_name'        => 'required|string',
+            'last_name'         => 'required|string',
+            'email'             => 'required|string|email|unique:users,email,'.$request->id.',id',
+            'phone'             => 'required|string|phone:US,BE|unique:users,phone,'.$request->id.',id',
+            'address'           => 'string|nullable',
+            'state'             => 'numeric|nullable',
+            'city'              => 'numeric|nullable',
+            'profile_picture'   => 'image|mimes:jpeg,bmp,png|max:2000'
+        ]);
+
+        if($validator->fails())
+        {
+            return redirect()->back()->withInput()->withErrors($validator);
+        }
+
+        $dataToUpdate   = array_filter($request->all());
+        if ( $request->hasFile('profile_picture') )
+        {
+            $imageName  = $record->id . '-' . str_random(12) . '.' . $request->file('profile_picture')->getClientOriginalExtension();
+            $path       = public_path( config('constants.front.dir.profilePicPath') );
+            $request->file('profile_picture')->move($path, $imageName);
+
+            if ( Image::open( $path . '/' . $imageName )->scaleResize(200, 200)->save( $path . '/' . $imageName ) )
+            {
+                $dataToUpdate['profile_picture'] = $imageName;
+
+                if(is_file(public_path( config('constants.front.dir.profilePicPath').$record->profile_picture)))
+                {
+                    $oldImageToDelete = $record->profile_picture;
+                }
+            }
+        }
+
+        if($request->has('password'))
+        {
+            $dataToUpdate['password']   = bcrypt($request->password);
+        }
+
+        if ( $request->has('phone') )
+        {
+            try
+            {
+                $dataToUpdate['phone'] = phone($request->get('phone'), 'US')->formatE164();
+            }
+            catch (\Exception $e)
+            {
+                $dataToUpdate['phone'] = '';
+            }
+        }
+
+        $record->update($dataToUpdate);
+
+        if ( isset($oldImageToDelete) && !empty($oldImageToDelete) )
+        {
+            unlink($path . '/' . $oldImageToDelete);
+        }
+
+        if ( array_key_exists('password', $dataToUpdate) )
+        {
+            event(new UserPasswordChanged($record, $request->password));
+        }
+
+        event(new EmployeeUpdate($record, array_key_exists('password', $dataToUpdate)));
+
+        session()->flash('alert-success', $this->thisModule['shortModuleName']." has been updated successfully!");
+        return redirect('backend/'. $this->thisModule['controller'] .'/detail/'. $record->id);
+
+
+    }
+
     public function destroy(User $record)
     {
         if ($record->isAdmin() || in_array($record->id, array_get($this->thisModule, 'undeleteable', []))) {
             abort(404);
         }
 
-        if(valid_email($record->email_decrypted))
+        if(valid_email($record->email))
             $record->notify(new EmployeeDeleteEmail($record));
         $record->delete();
 

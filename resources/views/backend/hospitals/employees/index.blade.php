@@ -79,11 +79,11 @@
               <div class="grid-filter">
                   <form id="filter-form">
                       <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-6">
                             <label>State</label>
                             {!! Form::select('state', $states, null, ['class' => 'form-control chosen', 'id' => 'ddl_states']) !!}
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-6">
                             <label>City</label>
                             {!! Form::select('city', $cities, null, ['class' => 'form-control chosen', 'id' => 'ddl_cities']) !!}
                         </div>
