@@ -54,7 +54,10 @@ class DashboardController extends BackendController
             'first_name' => 'required',
             'last_name'  => 'required',
             'email'      => 'required|email|max:255|unique:users,email,' . $record->id . ',id',
-            'password'   => ($request->get('password') != '' ? 'min:6' : ''),
+            'password'   => ($request->get('password') != '' ? 'min:8|case_diff|numbers|letters|symbols' : ''),
+        ],
+        [
+            'password.regex' => 'Password must contain upper case, lower case and symbols'
         ]);
 
         if ($validator->fails())

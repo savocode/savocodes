@@ -10,6 +10,7 @@
         "benwilkins/laravel-fcm-notification": "dev-master",
         "gregwar/image": "2.*",
         "guzzlehttp/guzzle": "~5.0|~6.0",
+        "intervention/image": "dev-master",
         "kodeine/laravel-meta": "dev-master",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
@@ -17,9 +18,9 @@
         "propaganistas/laravel-phone": "^3.0",
         "ramsey/uuid": "^3.7",
         "rap2hpoutre/laravel-log-viewer": "^0.10.3",
+        "schuppo/password-strength": "~1.5",
         "tymon/jwt-auth": "0.5.*",
-        "yajra/laravel-datatables-oracle": "^7.5",
-        "intervention/image": "dev-master"
+        "yajra/laravel-datatables-oracle": "^7.5"
     },
     "autoload": {
         "classmap": [

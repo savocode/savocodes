@@ -219,13 +219,20 @@
 
 <!-- SlimScroll -->
 <script src="{{ backend_asset('plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
+
+
 <!-- FastClick -->
 <script src="{{ backend_asset('plugins/fastclick/fastclick.js') }}"></script>
+
 <!-- AdminLTE App -->
 <script src="{{ backend_asset('dist/js/app.min.js') }}"></script>
 <script src="{{ backend_asset('dist/js/custom.js') }}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{ backend_asset('dist/js/demo.js') }}"></script>
+
+<script src="{{ backend_asset('plugins/pswdstrength/pwstrength-bootstrap.min.js') }}"></script>
+
+<script>$(':password').pwstrength();</script>
 @yield('inlineJS')
 
 </body>

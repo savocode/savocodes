@@ -169,6 +169,7 @@ return [
         Laravel\Tinker\TinkerServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        \Schuppo\PasswordStrength\PasswordStrengthServiceProvider::class,
 
         /*
          * Application Service Providers...

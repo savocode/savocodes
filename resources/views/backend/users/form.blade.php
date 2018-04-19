@@ -114,6 +114,7 @@
 </div>
 
 @section('inlineJS')
+
     <script type="text/javascript">
         var url='{!! URL::to('/') !!}';
 
@@ -131,4 +132,5 @@
             });
         })
     </script>
+
 @endsection
