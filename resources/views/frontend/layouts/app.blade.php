@@ -47,5 +47,9 @@
 
     <!-- Scripts -->
     <script src="{{ frontend_asset('js/app.js') }}"></script>
+
+    <script src="{{ backend_asset('plugins/pswdstrength/pwstrength-bootstrap.min.js') }}"></script>
+
+    <script>$('#password').pwstrength();</script>
 </body>
 </html>

@@ -49,7 +49,7 @@
             <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
         </div>
         <div class="form-group has-feedback">
-            <input type="password" name="password" class="form-control" placeholder="Password">
+            <input id="password" type="password" name="password" class="form-control" placeholder="Password">
             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
         </div>
         <div class="form-group has-feedback">
@@ -79,9 +79,14 @@
 <script src="{{ backend_asset('plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
 <!-- Bootstrap 3.3.6 -->
 <script src="{{ backend_asset('bootstrap/js/bootstrap.min.js') }}"></script>
+
+<script src="{{ backend_asset('plugins/pswdstrength/pwstrength-bootstrap.min.js') }}"></script>
+
+<script>$('#password').pwstrength();</script>
 <script>
   $(function () {
   });
+
 </script>
 </body>
 </html>

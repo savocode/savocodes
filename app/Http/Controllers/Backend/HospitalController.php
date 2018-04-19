@@ -473,7 +473,8 @@ class HospitalController extends BackendController
             'address'           => 'string|nullable',
             'state'             => 'numeric|nullable',
             'city'              => 'numeric|nullable',
-            'profile_picture'   => 'image|mimes:jpeg,bmp,png|max:2000'
+            'profile_picture'   => 'image|mimes:jpeg,bmp,png|max:2000',
+            'password'          => 'nullable|min:8|case_diff|numbers|letters|symbols'
         ]);
 
         if($validator->fails())

@@ -48,7 +48,7 @@ class UserUpdateRequest extends Request {
             'last_name'  => 'string',
             'email'      => 'email|max:255|unique_encrypted:users,email,'.$user->id.',id',
             // 'username'   => 'min:3|unique:users,username,'.$user->id.',id',
-            'password'   => 'min:6',
+            'password'   => 'nullable|min:8|case_diff|numbers|letters|symbols',
             'old_pwd'    => 'required_with:password|different:password',
             'city'       => 'integer',
             'state'      => 'integer',
