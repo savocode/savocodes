@@ -216,7 +216,7 @@ class WebserviceController extends ApiBaseController {
         switch ($response)
         {
             case \Password::INVALID_USER:
-                return RESTAPIHelper::response('Email not found in the system.', false, 'invalid_email');
+                return RESTAPIHelper::response('Unexpected error occurred', false, 'invalid_email');
                 break;
             case \Password::RESET_LINK_SENT:
                 return RESTAPIHelper::response(new \stdClass, true, 'We have sent a new password to your email. Please also check Junk/Spam folder as well.' );
