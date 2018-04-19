@@ -1,5 +1,56 @@
 <?php
 
+function generateAptibleConnection()
+{
+    if (getenv('DB_CONNECTION') !== 'aptible')
+    {
+        // If the DB_CONNECTION is not Aptible, then this won't be used,
+        // and we should just bail out.
+        return [];
+    }
+    $raw_url = getenv('DATABASE_URL');
+    if (!$raw_url)
+    {
+        error_log('DB_CONNECTION is aptible, but DATABASE_URL is not set!');
+        return [];
+    }
+    $url = parse_url($raw_url);
+    $aptibleConnection = [
+        'host'      => $url["host"],
+        'port'      => $url["port"],
+        'username'  => $url["user"],
+        'password'  => $url["pass"],
+        'database'  => substr($url["path"], 1),
+        'charset'   => 'utf8',
+        'prefix'    => '',
+    ];
+    $scheme = $url["scheme"];
+    if ($scheme === "mysql")
+    {
+        // NOTE: The options below are required to run on Aptible, because
+        // Aptible enforces SSL on connections to your MySQL database and
+        // uses a self-signed certificate for MySQL (the latter due to
+        // MySQL's poor security record). If you remove them, your app will
+        // fail to connect to MySQL with an Access Denied error.
+        $aptibleConnection['driver']    = 'mysql';
+        $aptibleConnection['collation'] = 'utf8_unicode_ci';
+        $aptibleConnection['options']   = [
+            PDO::MYSQL_ATTR_SSL_CIPHER => 'DHE-RSA-AES256-SHA',
+            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+        ];
+    }
+    elseif ($scheme === "postgresql")
+    {
+        $aptibleConnection['driver'] = 'pgsql';
+        $aptibleConnection['schema'] = 'public';
+    } else
+    {
+        error_log("DB_CONNECTION is aptible and DATABASE_URL is set, but the scheme '$scheme' is invalid!");
+        return [];
+    }
+    return $aptibleConnection;
+}
+
 return [
 
     /*
@@ -32,6 +83,7 @@ return [
     */
 
     'connections' => [
+        'aptible' => generateAptibleConnection(),
 
         'sqlite' => [
             'driver' => 'sqlite',

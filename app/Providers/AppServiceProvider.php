@@ -25,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        if ($this->app->environment() !== 'production') {
+            $this->app->register(\Way\Generators\GeneratorsServiceProvider::class);
+            $this->app->register(\Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
+        }
         // Debugging
         if (/*\App::environment('local') ||*/ request()->get('_debug') == 'true') {
             \Event::listen('Illuminate\Database\Events\QueryExecuted', function ($query) {
