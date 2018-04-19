@@ -14,7 +14,7 @@
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>{{ $moduleProperties['longModuleName'] }}
+      <h1>Referrals
       </h1>
     </section>
 
@@ -60,7 +60,7 @@
                             <div class="col-md-6">
                                 <div class="box">
                                     <dt>Created By</dt>
-                                    <dd>{{ $h->user->full_name_decrypted }}</dd>
+                                    <dd>{{ $h->user->full_name }}</dd>
 
                                     <dt>Reason</dt>
                                     <dd>{{ $h->reason }}</dd>
