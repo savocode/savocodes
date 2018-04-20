@@ -1,4 +1,4 @@
-FROM quay.io/aptible/php:7.0
+FROM quay.io/aptible/php:5.6
 
 WORKDIR /app
 
