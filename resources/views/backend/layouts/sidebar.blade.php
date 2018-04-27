@@ -19,10 +19,6 @@
                 'professions'        => $isAdmin,
                 'criteria'           => $isAdmin,
                 'reports'            => false,
-               // 'settings'           => $isAdmin,
-                'referrals'          => $isEmployee = user()->isEmployee(),
-                'hospital_physician' => $isEmployee,
-               // 'settings'           => $isEmployee,
             ] ) !!}
           </ul>
     </section>

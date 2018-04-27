@@ -5,8 +5,8 @@ return [
     // Project related constants
     'global' => [
         'site' => [
-            'name' => 'LifeCare',
-            'tinyName' => 'LC',
+            'name' => 'SavoCodes',
+            'tinyName' => 'SC',
             'version' => '1.0', // For internal code comparison (if any)
         ],
 
@@ -67,81 +67,82 @@ return [
                     'path'  => '/dashboard',
                     'icon'  => 'fa fa-dashboard',
                 ],
-                'users' => [
-                    'label'     => 'Users',
-                    'path'      => '/users',
-                    'regexPath' => '%(/users(/edit/\d+|/verification|/index)?)|(/user-stats(/detail/\d+|/index)?)%',
-                    'icon'      => 'fa fa-users',
+                'stores' => [
+                    'label'     => 'Stores',
+                    'path'      => '/stores',
+                    'regexPath' => '%(/stores(/edit/\d+|/index|/create)?)%',
+                    'icon'      => 'fa fa-building',
                     'submenu'   => [
                         [
-                            'label'     => 'All Users',
-                            'path'      => '/users/index',
-                            'icon'      => 'fa fa-user',
-                            'regexPath' => '%/users(/index|/detail/\d+|/purchases/\d+)?|(/user-stats(/detail/\d+|/index)?)$%',
+                            'label'     => 'All Stores',
+                            'path'      => '/stores/index',
+                            'icon'      => 'fa fa-building',
+                            'regexPath' => '%/stores(/index|/create|/edit/\d+|/detail/\d+)?$%',
                         ],
                     ],
                 ],
-                'hospital_physician' => [
-                    'label'     => 'Physicians',
-                    'path'      => '/physicians',
-                    'regexPath' => '%(/physicians(/index|/detail/\d+)?)%',
-                    'icon'      => 'fa fa-users',
+                'coupons' => [
+                    'label'     => 'Coupons',
+                    'path'      => '/coupons',
+                    'regexPath' => '%(/coupons(/edit/\d+|/index|/create)?)%',
+                    'icon'      => 'fa fa-tag',
                     'submenu'   => [
                         [
-                            'label'     => 'All Physicians',
-                            'path'      => '/physicians/index',
-                            'icon'      => 'fa fa-user',
-                            'regexPath' => '%/physicians(/index|/detail/\d+)$%',
+                            'label'     => 'All Coupons',
+                            'path'      => '/coupons/index',
+                            'icon'      => 'fa fa-tag',
+                            'regexPath' => '%/coupons(/index|/create|/edit/\d+|/detail/\d+)$%',
                         ],
                     ],
                 ],
-                'hospitals' => [
-                    'label'     => 'Hospital Management',
-                    'path'      => '/hospitals',
-                    'regexPath' => '%(/hospital(/edit/\d+|/index|/create)?)%',
-                    'icon'      => 'fa fa-medkit',
+                'payment' => [
+                    'label'     => 'Payment Management',
+                    'path'      => '/payments',
+                    'regexPath' => '%(/payments(/index|/detail/\d+)?)%',
+                    'icon'      => 'fa fa-credit-card',
                     'submenu'   => [
                         [
                             'label'     => 'All Hospitals',
-                            'path'      => '/hospitals/index',
-                            'icon'      => 'fa fa-hospital-o',
-                            'regexPath' => '%/hospitals((/index|/create|/detail/\d+|/edit/\d+|/\d+/employees|/\d+/employee/create|/\d+/employee/detail/\d+|/\d+/employee/edit/\d+)?)$%',
+                            'path'      => '/payments/index',
+                            'icon'      => 'fa fa-credit-card',
+                            'regexPath' => '%(/payments(/index|/detail/\d+)?)%',
                         ],
-//                        [
-//                            'label' => 'Hospital Locations',
-//                            'path'  => '/hospitals/location',
-//                            'icon'  => 'fa fa-location-arrow',
-//                            'regexPath' => false,
-//                        ],
+//
                     ],
                 ],
-                'referrals' => [
-                    'label' => 'Referrals',
-                    'path' => '/referrals/index',
-                    'regexPath' => '%(/referrals(/index|/canceled)?)%',
-                    'icon' => 'fa fa-user-plus',
+                'networks' => [
+                    'label' => 'Networks',
+                    'path' => '/networks/index',
+                    'regexPath' => '%(/networks(/index|/detail/\d+)?)%',
+                    'icon' => 'fa fa-list-alt',
                     'submenu' => [
                         [
-                            'label' => 'All Referrals',
-                            'path' => '/referrals/index',
-                            'regexPath' => '%/referrals(/index|/detail/\d+)$%',
-                            'icon' => 'fa fa-check-square-o',
+                            'label' => 'All Networks',
+                            'path' => '/networks/index',
+                            'regexPath' => '%/networks(/index|/detail/\d+)$%',
+                            'icon' => 'fa fa-list-alt',
                         ],
                     ],
                 ],
-                'professions' => [
-                    'label' => 'Professions',
-                    'path' => '/settings/profession',
-                    'regexPath' => false,
-                    'icon' => 'fa fa-yelp',
-
-                ],
-                'criteria' => [
-                    'label' => 'Criteria',
-                    'path' => '/settings/criteria',
-                    'regexPath' => false,
-                    'icon' => 'fa fa-star',
-
+                'imports' => [
+                    'label' => 'Imports',
+                    'path' => '/imports/index',
+                    'regexPath' => '%(/imports(/index|/detail/\d+)?)%',
+                    'icon' => 'fa fa-cloud-upload',
+                    'submenu' => [
+                        [
+                            'label' => 'Imports',
+                            'path' => '/imports/index',
+                            'regexPath' => '%/imports(/index|/history/\d+)$%',
+                            'icon' => 'fa fa-cloud-upload',
+                        ],
+                        [
+                            'label' => 'History',
+                            'path' => '/imports/history',
+                            'regexPath' => '%/imports(/index|/history/\d+)$%',
+                            'icon' => 'fa fa-history',
+                        ],
+                    ],
                 ],
                 'reports' => [
                     'label' => 'Reports & Analytics',

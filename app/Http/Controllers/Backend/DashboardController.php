@@ -15,23 +15,24 @@ class DashboardController extends BackendController
 
     public function getIndex()
     {
-        $methodName = 'get' . ucfirst(user()->user_role_key) . 'Index';
-        return app(__CLASS__)->$methodName();
+      //  $methodName = 'get' . ucfirst(user()->user_role_key) . 'Index';
+        return $this->getAdminIndex();//app(__CLASS__)->$methodName();
     }
 
     public function getAdminIndex()
     {
-        $allUsers = User::users()->get();
+       // $allUsers = User::users()->get();
 
-        $verifiedUsers = $allUsers->filter(function ($record) {
-            return ($record->isVerified());
-        });
+
+//        $verifiedUsers = $allUsers->filter(function ($record) {
+//            return ($record->isVerified());
+//        });
 
         $stats                       = new \stdClass;
-        $stats->total_users          = $allUsers->count();
-        $stats->total_hospital       = User::whereRoleId(User::ROLE_HOSPITAL_EMPLOYEES)->count();
-        $stats->total_physician      = User::whereRoleId(User::ROLE_PHYSICIANS)->count();
-        $stats->total_verified_users = $verifiedUsers->count();
+//        $stats->total_users          = $allUsers->count();
+//        $stats->total_hospital       = User::whereRoleId(User::ROLE_HOSPITAL_EMPLOYEES)->count();
+//        $stats->total_physician      = User::whereRoleId(User::ROLE_PHYSICIANS)->count();
+//        $stats->total_verified_users = $verifiedUsers->count();
 
         return backend_view('dashboard', compact('stats'));
     }
@@ -98,37 +99,5 @@ class DashboardController extends BackendController
         return redirect(route('backend.profile.setting'));
     }
 
-    public function editSettings(Request $request)
-    {
-        $ratePerMile = Setting::where('config_key', 'setting.rate_per_mile')->first();
-        $ratePerMile = ($ratePerMile) ? $ratePerMile->config_value : '';
 
-        if ($request->getMethod() == 'GET') {
-            return backend_view('settings.settings', compact('ratePerMile'));
-        }
-
-        Setting::updateSettingArray([
-            ['config_key' => 'setting.rate_per_mile', 'config_value' => $request->get('rate_per_mile')],
-        ]);
-
-        session()->flash('alert-success', 'Settings have been updated successfully!');
-        return redirect(route('backend.settings'));
-    }
-
-    public function getEmployeeIndex()
-    {
-        $allUsers = User::users()->whereHospitalId(user()->hospital_id)->get();
-
-        $verifiedUsers = $allUsers->filter(function ($record) {
-            return ($record->isVerified());
-        });
-
-        $stats                           = new \stdClass;
-        $stats->total_hospital_physician = $allUsers->count();
-        $stats->total_hospital_employee  = User::whereRoleId(User::ROLE_HOSPITAL_EMPLOYEES)->whereHospitalId(user()->hospital_id)->count();
-        $stats->total_verified_physician = $verifiedUsers->count();
-
-        return backend_view('dashboard', compact('stats'));
-
-    }
 }

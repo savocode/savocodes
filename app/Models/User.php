@@ -2,26 +2,12 @@
 
 namespace App\Models;
 
-use App\Classes\FirebaseHandler;
-use App\Classes\RijndaelEncryption;
-use App\Events\Api\JWTUserUpdate;
-use App\Events\BlockEvent;
-use App\Events\MessagePayment;
-use App\Events\MessageSent;
-use App\Events\NewFollowingEvent;
-use App\Events\NewUnfollowingEvent;
-use App\Events\UnblockEvent;
-use App\Events\UserActivated;
-use App\Events\UserDeactivated;
-use App\Events\UserDeleted;
-use App\Events\UserFacebookAccountSynced;
+
 use App\Http\Traits\JWTUserTrait;
-use App\Http\Traits\Metable\Metable;
-use App\Models\Message;
+//use App\Http\Traits\Metable\Metable;
+
 use App\Models\Setting;
-use App\Models\Transaction;
-use App\Models\UserCharge;
-use App\Models\UserFacebook;
+
 use App\Notifications\Backend\ResetPassword as BackendResetPasswordNotification;
 use App\Notifications\Frontend\ResetPassword as FrontendResetPasswordNotification;
 use Exception;
@@ -29,33 +15,20 @@ use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Sofa\Eloquence\Eloquence;
+//use Sofa\Eloquence\Eloquence;
 use JWTAuth;
 
 class User extends Authenticatable
 {
-    use SoftDeletes, Notifiable, Metable;
+    use SoftDeletes, Notifiable;
 
     const ROLE_ADMIN                = 1;
-    const ROLE_HOSPITAL_EMPLOYEES   = 2;
-    const ROLE_PHYSICIANS           = 3;
+
 
     const ADMIN_USER_ID             = 1;
 
     const BACKEND_ALLOW_ROLES = [
         self::ROLE_ADMIN,
-        self::ROLE_HOSPITAL_EMPLOYEES,
-    ];
-
-    const API_ALLOW_ROLES = [
-        self::ROLE_PHYSICIANS,
-    ];
-
-    /**
-     * Fields that will be saved encrypted in database
-     */
-    protected static $encryptedFields = [
-        'first_name', 'last_name', 'email', 'phone'
     ];
 
     /**
@@ -64,7 +37,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'email_verification', 'email', 'password', 'hospital_id', 'profession_id', 'role_id', 'first_name', 'last_name', 'phone', 'address', 'city', 'state', 'country', 'profile_picture',
+        'email_verification', 'email', 'password', 'role_id', 'first_name', 'last_name', 'phone', 'address', 'city', 'state', 'country', 'profile_picture',
     ];
 
     /**
@@ -85,28 +58,6 @@ class User extends Authenticatable
         'is_active', 'boolean',
     ];
 
-    /**
-     * The event map for the model.
-     *
-     * @var array
-     */
-    protected $events = [
-        'deleted' => UserDeleted::class,
-    ];
-
-    /**
-     * Meta table for this model.
-     *
-     * @var string
-     */
-    protected $metaTable = 'user_meta';
-
-    /**
-     * Meta data model relating to this model.
-     *
-     * @var string
-     */
-    protected $metaModel = 'App\Models\UserMeta';
 
     /**
      * Send the password reset notification.
@@ -139,20 +90,7 @@ class User extends Authenticatable
     /*
      * @User related methods
      */
-    public static function getRoleIdByUserType($value)
-    {
-        switch ($value) {
-            case 'normal':
-                return self::ROLE_NORMAL_USER;
-                break;
-            case 'driver':
-                return self::ROLE_DRIVER;
-                break;
-            default:
-                throw new \App\Exceptions\InvalidUserTypeException("Invalid string type detected");
-                break;
-        }
-    }
+
 
     public function validateUserActiveCriteria()
     {
@@ -196,11 +134,6 @@ class User extends Authenticatable
         return (bool) ($this->attributes['role_id'] == self::ROLE_ADMIN);
     }
 
-    public function isEmployee()
-    {
-        return (bool) ($this->attributes['role_id'] == self::ROLE_HOSPITAL_EMPLOYEES);
-    }
-
     public function isSelf($user)
     {
         return (bool) ($this->attributes['id'] == self::extractUserId($user));
@@ -219,15 +152,6 @@ class User extends Authenticatable
         return $exist ? self::generateUniqueVerificationCode() : $code;
     }
 
-    public static function getEncryptionFields()
-    {
-        return (array) self::$encryptedFields;
-    }
-
-//    public function routeNotificationForMail()
-//    {
-//        return RijndaelEncryption::decrypt($this->email);
-//    }
 
     public function activate()
     {
@@ -240,80 +164,6 @@ class User extends Authenticatable
         $this->is_active = 0;
         $this->save();
     }
-
-//    public function followUser($user)
-//    {
-//        try {
-//            $this->following()->attach($user);
-//
-//            event(new NewFollowingEvent($this, $user));
-//
-//            return true;
-//
-//        } catch (\Illuminate\Database\QueryException $e) {
-//            // It is "Integrity constraint violation"
-//            if ( $e->getCode() == "23000" ) {
-//                return true;
-//            }
-//
-//            return false;
-//        } catch (Exception $e) {
-//            return false;
-//        }
-//    }
-//
-//    public function unfollowUser($user)
-//    {
-//        try {
-//            $this->following()->detach($user);
-//
-//            event(new NewUnfollowingEvent($this, $user));
-//
-//            return true;
-//
-//        } catch (\Illuminate\Database\QueryException $e) {
-//            // It is "Integrity constraint violation"
-//            if ( $e->getCode() == "23000" ) {
-//                return true;
-//            }
-//
-//            return false;
-//        } catch (Exception $e) {
-//            return false;
-//        }
-//    }
-//
-//    public function doBlock($user)
-//    {
-//        try {
-//            $this->blocked()->attach($user);
-//
-//            event(new BlockEvent($this, $user));
-//
-//            return true;
-//
-//        } catch (\Illuminate\Database\QueryException $e) {
-//            return true;
-//        } catch (Exception $e) {
-//            return false;
-//        }
-//    }
-//
-//    public function doUnblock($user)
-//    {
-//        try {
-//            $this->blocked()->detach($user);
-//
-//            event(new UnblockEvent($this, $user));
-//
-//            return true;
-//
-//        } catch (\Illuminate\Database\QueryException $e) {
-//            return true;
-//        } catch (Exception $e) {
-//            return false;
-//        }
-//    }
 
     public function addDevice($deviceToken, $deviceType, $authToken)
     {
@@ -358,165 +208,27 @@ class User extends Authenticatable
         }
     }
 
-    public function addFacebook($facebookUid, $accessToken)
-    {
-        try {
-            $this->facebook()->delete();
-            UserFacebook::whereFacebookUid($facebookUid)->delete();
-        } catch (\Illuminate\Database\QueryException $e) {}
-
-        $facebook = $this->facebook()->create([
-            'facebook_uid' => $facebookUid,
-            'access_token'  => $accessToken,
-        ]);
-
-        event(new UserFacebookAccountSynced($this, $facebook));
-
-        return $facebook;
-    }
-
-    public function hasFacebook($facebookUid)
-    {
-        return (bool) ($this->facebook()->whereFacebookUid($facebookUid)->limit(1)->first() ? true : false);
-    }
-
-    public static function getUserByFacebookId($facebookUid)
-    {
-        $record = UserFacebook::whereFacebookUid($facebookUid)->first();
-
-        return $record ? $record->user : null;
-    }
-
-    public function addActivity($key, $value)
-    {
-        return $this->activities()->create([
-            'event_key'  => $key,
-            'event_data' => is_scalar($value) ? $value : json_encode($value),
-            'is_encoded' => is_scalar($value) ? 0 : 1,
-        ]);
-    }
-
-
-    public function createNotification($userType, $text, array $notification_data=[])
-    {
-        $notification = (new Notification)->createNotification([
-            'notification'      => $text,
-            'notification_type' => array_key_exists('type', $notification_data) ? $notification_data['type'] : '',
-            'notification_data' => $notification_data, // InApp payload
-            'is_read'           => 1,
-        ])->setOwner($this, $userType);
-
-        return $notification;
-    }
-
-    public function saveSearch($payload)
-    {
-        return $this->searches()->create([
-            'origin_latitude'  => $payload->get('origin_latitude'),
-            'origin_longitude' => $payload->get('origin_longitude'),
-            'destination_latitude' => $payload->get('destination_latitude'),
-            'destination_longitude' => $payload->get('destination_longitude'),
-            'extra' => json_encode( RideSearch::extractSearchDetails($payload) ),
-        ]);
-    }
-
-    public function getActivity($key)
-    {
-        $activity = $this->activities()->whereEventKey($key)->first();
-
-        return $activity ?: new UserActivity;
-    }
-
-    public function upgradeToDriver()
-    {
-        $this->role_id = self::ROLE_DRIVER;
-        $this->save();
-    }
-
-    public function downgradeToNormalUser()
-    {
-        $this->role_id = self::ROLE_NORMAL_USER;
-        $this->save();
-    }
-
     public function device()
     {
         return $this->devices()->orderBy('id', 'DESC')->first();
     }
 
-    public function avgRating()
-    {
-        return $this->ratings->avg('rating') ?: 0;
-    }
-
-    public static function extractUserBasicDetails($user)
-    {
-        if ( !$user instanceof self ) {
-            throw new Exception('Argument 1 passed to App\Models\User::extractUserBasicDetails() must be an instance of App\Models\User, null given');
-        }
-
-        return [
-            'user_id'         => $user->id,
-            'first_name'      => $user->first_name,
-            'last_name'       => $user->last_name,
-            'profile_picture' => $user->profile_picture_auto,
-            'rating'          => $user->getMetaDefault('rating', 0.0),
-            'trips_canceled'  => $user->getMetaDefault('trips_canceled', 0),
-        ];
-    }
-
-    /*
-     * @Attributes
-     */
-    public function getPrefixUidAttribute()
-    {
-        return 'u' . $this->attributes['id'];
-    }
 
     public function getUserRoleKeyAttribute()
     {
-        switch ($this->attributes['role_id']) {
-            case self::ROLE_PHYSICIANS:
-                return 'physician';
-                break;
+        switch($this->attributes['role_id'])
+        {
             case self::ROLE_ADMIN:
                 return 'admin';
-                break;
-            case self::ROLE_HOSPITAL_EMPLOYEES:
-                return 'employee';
-                break;
-            default:
-                throw new \App\Exceptions\InvalidUserTypeException("Invalid user role detected", 1);
-                break;
-        }
-    }
 
-    public function getUserRoleKeyWebAttribute()
-    {
-        switch ($this->attributes['role_id']) {
-            case self::ROLE_PHYSICIANS:
-                return 'passenger';
-                break;
-            case self::ROLE_ADMIN:
-                return 'admin';
-                break;
-            case self::ROLE_HOSPITAL_EMPLOYEES:
-                return 'employee';
-                break;
             default:
-                throw new \App\Exceptions\InvalidUserTypeException("Invalid user role detected", 1);
-                break;
+                return '';
         }
     }
 
     public function getFullNameAttribute()
     {
         return ltrim($this->attributes['first_name'] . ' ' . $this->attributes['last_name']);
-    }
-
-    public function getFullNameDecryptedAttribute()
-    {
-        return RijndaelEncryption::decrypt($this->attributes['first_name']) . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
     }
 
     public function getProfilePicturePathAttribute()
@@ -536,56 +248,6 @@ class User extends Authenticatable
             '<span class="label label-danger">Inactive</span>';
     }
 
-    //Start
-    public function getFirstNameDecryptedAttribute()
-    {
-        return RijndaelEncryption::decrypt($this->attributes['first_name']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
-    }
-
-    public function getLastNameDecryptedAttribute()
-    {
-        return RijndaelEncryption::decrypt($this->attributes['last_name']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
-    }
-
-    public function getEmailDecryptedAttribute()
-    {
-        return RijndaelEncryption::decrypt($this->attributes['email']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
-    }
-
-    public function getPhoneDecryptedAttribute()
-    {
-        return RijndaelEncryption::decrypt($this->attributes['phone']);// . ' ' . RijndaelEncryption::decrypt($this->attributes['last_name']);
-    }
-    //Ends
-    /**
-     * All Mutators will goes here
-     */
-    public function setUsernameAttribute($value)
-    {
-        $this->attributes['username'] = strtolower($value);
-    }
-
-    /**
-     * Accessor to fetch title attribute via hospital relation property
-     *
-     * @return string
-     */
-    public function getHospitalTitleAttribute()
-    {
-        return $this->attributes['hospital_id'] > 0 ? $this->hospital->title : '';
-    }
-
-
-
-    /**
-     * Accessor to fetch title attribute via profession relation property
-     *
-     * @return string
-     */
-    public function getProfessionTitleAttribute()
-    {
-        return $this->attributes['profession_id'] > 0 ? $this->profession->title : '';
-    }
 
     public function getStateTitleAttribute()
     {
@@ -605,45 +267,6 @@ class User extends Authenticatable
         }
     }
 
-    public function getHasSyncFriendsAttribute()
-    {
-        try {
-            return $this->activities()->whereEventKey('sync_friends')->first() ? true : false;
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    public static function getBitwiseGenderValueByUserIds(array $userIds)
-    {
-        if ( count($userIds) == 0 )
-            return 0;
-
-        $result = \DB::select(\DB::raw("
-            SELECT
-              user_id,
-              value,
-              CASE
-                value
-                WHEN 'Male'
-                THEN 1
-                WHEN 'Female'
-                THEN 2
-              END AS gender
-            FROM
-              user_meta
-            WHERE `key` = 'gender'
-            AND user_id IN (".implode(',', $userIds).")
-            GROUP BY gender
-        "));
-
-        $cummulativeValue = 0;
-        foreach ($result as $value) {
-            $cummulativeValue = $cummulativeValue | $value->gender;
-        }
-
-        return $cummulativeValue;
-    }
 
     /*
      * @Scopes
@@ -667,24 +290,9 @@ class User extends Authenticatable
      * @Relationships
      */
 
-    public function activities()
-    {
-        return $this->hasMany('App\Models\UserActivity');
-    }
-
     public function devices()
     {
         return $this->hasMany('App\Models\UserDevice');
-    }
-
-    public function hospital()
-    {
-        return $this->belongsTo(Hospital::class);
-    }
-
-    public function profession()
-    {
-        return $this->belongsTo(Profession::class);
     }
 
     public function usercity()
@@ -697,18 +305,5 @@ class User extends Authenticatable
         return $this->belongsTo('App\Models\State', 'state', 'id');
     }
 
-    public function referrals()
-    {
-        return $this->hasMany(Referral::class, 'referred_by');
-    }
 
-    public function notifications()
-    {
-        return $this->hasMany(Notification::class);
-    }
-
-    public function metas()
-    {
-        return $this->hasMany(UserMeta::class, 'user_id');
-    }
 }
